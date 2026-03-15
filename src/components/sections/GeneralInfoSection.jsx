@@ -23,7 +23,7 @@ export default function GeneralInfoSection() {
 
       <h3>Información General</h3>
 
-      <div>
+      <div className="form-field">
         <label>ID</label>
         <input
           value={model.id || ""}
@@ -31,7 +31,7 @@ export default function GeneralInfoSection() {
         />
       </div>
 
-      <div>
+      <div className="form-field">
         <label>Nombre</label>
         <input
           value={model.name || ""}
@@ -39,7 +39,7 @@ export default function GeneralInfoSection() {
         />
       </div>
 
-      <div>
+      <div className="form-field">
         <label>Descripción</label>
         <input
           value={model.description || ""}
@@ -47,7 +47,7 @@ export default function GeneralInfoSection() {
         />
       </div>
 
-      <div>
+      <div className="form-field">
         <label>Versión</label>
         <input
           value={model.version || ""}

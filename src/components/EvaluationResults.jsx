@@ -1,3 +1,5 @@
+import "../styles/ModelEditor.css"
+
 export default function EvaluationResults({ result }) {
 
   if (!result) {
@@ -8,14 +10,16 @@ export default function EvaluationResults({ result }) {
 
   return (
 
-    <div style={{ marginTop: 20 }}>
+    <div className="results-container">
 
-      <h3>Resultados de Evaluación</h3>
+      <h3 className="results-title">
+        Resultados de Evaluación
+      </h3>
 
       <h4>Violaciones</h4>
       <p>Total: {result.violations_count}</p>
 
-      <ul>
+      <ul className="violations-list">
         {(result.violations || []).map((v, i) => (
           <li key={i}>
             <b>{v.rule}</b> ({v.dimension}) → {v.message}
@@ -26,19 +30,28 @@ export default function EvaluationResults({ result }) {
       <h4>Métricas</h4>
 
       {Object.entries(metrics).map(([name, metric]) => (
-        <div key={name} style={{ marginBottom: 10 }}>
+
+        <div key={name} className="metric-card">
 
           <b>{name}</b>
 
-          <p>Valor: {metric.value}</p>
+          <p>
+            Valor: <span className="metric-value">{metric.value}</span>
+          </p>
 
-          <p>Interpretación: {metric.interpretation}</p>
+          <p>
+            Interpretación: {metric.interpretation}
+          </p>
 
         </div>
+
       ))}
 
       <h4>IGC</h4>
-      <p>{result.IGC}</p>
+
+      <div className="igc-box">
+        {result.IGC}
+      </div>
 
     </div>
   )

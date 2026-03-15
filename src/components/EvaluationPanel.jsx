@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useModelContext } from "../context/ModelContext"
+import "../styles/EvaluationPanel.css"
 
 import {
   evaluateMetrics,
@@ -9,18 +10,15 @@ import {
 
 export default function EvaluationPanel() {
 
-  const { model, icfPairs, cafDocumentation, cptData, mismatchData} = useModelContext()
+  const { model, icfPairs, cafDocumentation, cptData, mismatchData } = useModelContext()
 
-  const [metrics,setMetrics] = useState(null)
-  const [violations,setViolations] = useState(null)
-  const [igc,setIGC] = useState(null)
-  const [error,setError] = useState(null)
-
-  /* ---------------- RULES ---------------- */
+  const [metrics, setMetrics] = useState(null)
+  const [violations, setViolations] = useState(null)
+  const [igc, setIGC] = useState(null)
+  const [error, setError] = useState(null)
 
   const runRules = async () => {
-
-    try{
+    try {
 
       const result = await evaluateModelRules(model)
 
@@ -29,20 +27,14 @@ export default function EvaluationPanel() {
       setIGC(null)
       setError(null)
 
-    }catch(err){
-
+    } catch (err) {
       console.error(err)
       setError("Error running rule evaluation")
-
     }
-
   }
 
-  /* ---------------- METRICS ---------------- */
-
   const runMetrics = async () => {
-
-    try{
+    try {
 
       const result = await evaluateMetrics(model)
 
@@ -51,85 +43,84 @@ export default function EvaluationPanel() {
       setIGC(null)
       setError(null)
 
-    }catch(err){
-
+    } catch (err) {
       console.error(err)
       setError("Error running metrics evaluation")
-
     }
-
   }
-
-  /* ---------------- FULL ---------------- */
 
   const runFullEvaluation = async () => {
 
-  try{
+    try {
 
-    const payload = {
-      model,
-      icf_pairs: icfPairs,
-      caf_documentation: cafDocumentation, 
-      cpt_data : cptData,
-      mismatch_data : mismatchData
+      const payload = {
+        model,
+        icf_pairs: icfPairs,
+        caf_documentation: cafDocumentation,
+        cpt_data: cptData,
+        mismatch_data: mismatchData
+      }
+
+      const result = await evaluateFull(payload)
+
+      setMetrics(result.metrics || {})
+
+      setViolations({
+        violations_count: result.violations_count || 0,
+        violations: result.violations || []
+      })
+
+      setIGC(result.IGC ?? null)
+
+      setError(null)
+
+    } catch (err) {
+
+      console.error(err)
+      setError("Error running full evaluation")
+
     }
-
-    const result = await evaluateFull(payload)
-
-    setMetrics(result.metrics || {})
-
-    setViolations({
-      violations_count: result.violations_count || 0,
-      violations: result.violations || []
-    })
-
-    setIGC(result.IGC ?? null)
-
-    setError(null)
-
-  }catch(err){
-
-    console.error(err)
-    setError("Error running full evaluation")
-
   }
 
-}
   return (
 
-    <div style={{marginTop:40}}>
+   <div className="section-card section-general evaluation-panel">
 
-      <h2>Evaluación del Modelo</h2>
+      <h2 className="evaluation-title">
+        Evaluación del Modelo
+      </h2>
 
-      <div style={{display:"flex",gap:10}}>
+      <div className="button-group">
 
         <button onClick={runMetrics}>
           Evaluar métricas
         </button>
 
         <button onClick={runRules}>
-          Evlauar reglas OCL
+          Evaluar reglas OCL
         </button>
 
-        <button onClick={runFullEvaluation}>
-          Realizar evaluación completa 
+        <button
+          onClick={runFullEvaluation}
+        >
+          Evaluación completa
         </button>
 
       </div>
 
       {error && (
-        <p style={{color:"red"}}>{error}</p>
+        <p className="error">{error}</p>
       )}
 
-      {/* ---------------- IGC ---------------- */}
+      {/* IGC */}
 
       {igc !== null && (
 
-        <div style={{marginTop:20}}>
+        <div className="igc-section">
 
           <h3>IGC Score</h3>
 
-          <p style={{fontSize:22,fontWeight:"bold"}}>
+          <p className="igc-score">
             {igc}
           </p>
 
@@ -137,19 +128,19 @@ export default function EvaluationPanel() {
 
       )}
 
-      {/* ---------------- METRICS ---------------- */}
+      {/* METRICS */}
 
       {metrics && (
 
-        <div style={{marginTop:20}}>
+        <div className="metrics-section">
 
-          <h3>Metrica</h3>
+          <h3>Métricas</h3>
 
-          <table border="1" cellPadding="5">
+          <table className="metrics-table">
 
             <thead>
               <tr>
-                <th>Metrica</th>
+                <th>Métrica</th>
                 <th>Valor</th>
                 <th>Interpretación</th>
               </tr>
@@ -157,7 +148,7 @@ export default function EvaluationPanel() {
 
             <tbody>
 
-              {Object.entries(metrics).map(([name,value]) => {
+              {Object.entries(metrics).map(([name, value]) => {
 
                 const metricValue =
                   typeof value === "object" ? value.value : value
@@ -185,11 +176,11 @@ export default function EvaluationPanel() {
 
       )}
 
-      {/* ---------------- VIOLATIONS ---------------- */}
+      {/* VIOLATIONS */}
 
       {violations && (
 
-        <div style={{marginTop:20}}>
+        <div className="violations-section">
 
           <h3>
             Rule Violations ({violations.violations_count})
@@ -201,20 +192,20 @@ export default function EvaluationPanel() {
 
           {violations.violations_count > 0 && (
 
-            <table border="1" cellPadding="5">
+            <table className="violations-table">
 
               <thead>
                 <tr>
                   <th>Práctica</th>
                   <th>Regla OCL</th>
                   <th>Dimensión</th>
-                  <th>Violación regla OCL</th>
+                  <th>Violación</th>
                 </tr>
               </thead>
 
               <tbody>
 
-                {(violations.violations || []).map((v,i)=>(
+                {(violations.violations || []).map((v, i) => (
                   <tr key={i}>
                     <td>{v.practice_id}</td>
                     <td>{v.rule}</td>
@@ -234,6 +225,5 @@ export default function EvaluationPanel() {
       )}
 
     </div>
-
   )
 }

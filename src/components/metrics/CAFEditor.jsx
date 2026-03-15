@@ -103,7 +103,7 @@ export default function CAFEditor(){
 
     <div style={{marginTop:40}}>
 
-      <h3>CAF covertura de documentación</h3>
+      <h3>CAF cobertura de documentación</h3>
 
       {renderSection(
         "Activities",

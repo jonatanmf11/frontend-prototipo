@@ -11,11 +11,11 @@ import ICFPairsEditor from "./metrics/ICFPairsEditor"
 import CAFEditor from "./metrics/CAFEditor"
 import CPTEditor from "./metrics/CPTEditor"
 import MismatchEditor from "./metrics/MismatchEditor"
+import "../styles/ModelEditor.css"
 
 export default function ModelEditor() {
 
   const modelHook = useModelContext()
-
   const { loading } = modelHook
 
   if (loading) {
@@ -24,28 +24,50 @@ export default function ModelEditor() {
 
   return (
 
-    <div>
+    <div className="editor-container">
 
-      <h1>Editor del Modelo</h1>
+      <h1 className="editor-title">
+        Editor del Modelo
+      </h1>
 
-      <GeneralInfoSection {...modelHook} />
-      <RolesSection {...modelHook} />
-      <PracticesSection {...modelHook} />
-      <RelationsSection {...modelHook} />
-      <ContextSection {...modelHook} />
+      <div className="section-card section-general">
+        <GeneralInfoSection {...modelHook} />
+      </div>
 
-      {/* -------- editores de metricas  -------- */}
+      <div className="section-card section-roles">
+        <RolesSection {...modelHook} />
+      </div>
 
-      <ICFPairsEditor />
+      <div className="section-card section-practices">
+        <PracticesSection {...modelHook} />
+      </div>
 
-      <CAFEditor />
+      <div className="section-card section-relations">
+        <RelationsSection {...modelHook} />
+      </div>
 
-      <CPTEditor />
+      <div className="section-card section-context">
+        <ContextSection {...modelHook} />
+      </div>
 
-      <MismatchEditor />
+      {/* editores de métricas */}
+
+      <div className="section-card">
+        <ICFPairsEditor />
+      </div>
+
+      <div className="section-card">
+        <CAFEditor />
+      </div>
+
+      <div className="section-card">
+        <CPTEditor />
+      </div>
+
+      <div className="section-card">
+        <MismatchEditor />
+      </div>
 
     </div>
-
   )
-
 }

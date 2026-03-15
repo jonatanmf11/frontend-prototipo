@@ -1,0 +1,38 @@
+.mismatch-container{
+  margin-top:40px;
+}
+
+.mismatch-title{
+  color:#132235;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom:20px;
+}
+
+.mismatch-table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+.mismatch-table th{
+  background:#2f5f8f;
+  color:white;
+  padding:10px;
+  text-align:left;
+}
+
+.mismatch-table td{
+  padding:8px;
+  border-bottom:1px solid #e5e7eb;
+}
+
+.mismatch-table input{
+  width:80px;
+  padding:5px;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
+
+.mismatch-table tr:hover{
+  background:#f3f7fb;
+}
