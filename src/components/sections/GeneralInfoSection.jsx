@@ -1,69 +1,40 @@
-import { useModelContext } from "../../context/ModelContext"
+import React from "react";
+import { useModelContext } from "../../context/ModelContext";
+import FormSection from "../../utils/FormSection";
 
-export default function GeneralInfoSection() {
+export default function GeneralInfoSection({ step, fieldErrors, setFieldErrors }) {
+  const { model, setModel } = useModelContext();
 
-  const { model, setModel } = useModelContext()
+  if (!model) return <div>Loading model...</div>;
 
-  if (!model) {
-    return <div>Loading model...</div>
-  }
+  const fields = [
+    { name: "id", label: "ID", placeholder: "Ingrese ID", type: "text", flex: "1 1 45%"  },
+    { name: "name", label: "Nombre", placeholder: "Ingrese nombre", type: "text", flex: "1 1 45%" },
+    { name: "description", label: "Descripción", placeholder: "Ingrese descripción", type: "text", flex: "1 1 45%" },
+    { name: "version", label: "Versión", placeholder: "Ingrese versión", type: "text", flex: "1 1 45%"  },
+  ];
 
-  const updateField = (field, value) => {
 
-    setModel({
-      ...model,
-      [field]: value
-    })
-
-  }
+  const items = [model]; 
+  const setItems = (updatedItems) => {
+    if (updatedItems?.length > 0) setModel(updatedItems[0]);
+  };
 
   return (
+    <div >
 
-    <div>
-
-      <h3>Información General</h3>
-
-      <p className="section-help">
-        Define el nombre y descripción del proceso híbrido que deseas evaluar.
-      </p>
-
-<div className="form-grid">
-
-  <div className="form-field">
-    <label>ID</label>
-    <input
-      value={model.id || ""}
-      onChange={(e) => updateField("id", e.target.value)}
-    />
-  </div>
-
-  <div className="form-field">
-    <label>Nombre</label>
-    <input
-      value={model.name || ""}
-      onChange={(e) => updateField("name", e.target.value)}
-    />
-  </div>
-
-  <div className="form-field">
-    <label>Descripción</label>
-    <input
-      value={model.description || ""}
-      onChange={(e) => updateField("description", e.target.value)}
-    />
-  </div>
-
-  <div className="form-field">
-    <label>Versión</label>
-    <input
-      value={model.version || ""}
-      onChange={(e) => updateField("version", e.target.value)}
-    />
-  </div>
-
-</div>
+        <FormSection
+        title="Información General"
+        helpText="Define el nombre y descripción del proceso híbrido que deseas evaluar."
+        items={items}
+        setItems={setItems}
+        fields={fields}
+        fieldErrors={fieldErrors}
+        setFieldErrors={setFieldErrors}
+        layout="row"       // para poner los inputs en fila
+        showAddButton={false} 
+        showRemoveButton={false}
+      />
     </div>
-
-  )
-
+  );
 }

@@ -1,103 +1,55 @@
-import { useModelContext } from "../../context/ModelContext"
+import { useModelContext } from "../../context/ModelContext";
+import FormSection from "../../utils/FormSection";
 
-function RelationsSection() {
+function RelationsSection({ fieldErrors, setFieldErrors }) {
+  const { model, setModel } = useModelContext();
 
-  const { model, setModel } = useModelContext()
+  const relations = model.compatibilityRelations || [];
 
-  const addRelation = () => {
-
-    const newRelation = {
-      practiceA: "",
-      practiceB: "",
-      type: ""
-    }
-
+  const setItems = (updatedItems) => {
     setModel({
       ...model,
-      compatibilityRelations: [
-        ...(model.compatibilityRelations || []),
-        newRelation
-      ]
-    })
-  }
+      compatibilityRelations: updatedItems,
+    });
+  };
 
-  const updateRelation = (index, field, value) => {
-
-    const updatedRelations = [...(model.compatibilityRelations || [])]
-
-    updatedRelations[index] = {
-      ...updatedRelations[index],
-      [field]: value
-    }
-
-    setModel({
-      ...model,
-      compatibilityRelations: updatedRelations
-    })
-  }
-
-  const removeRelation = (index) => {
-
-    const updatedRelations = model.compatibilityRelations.filter(
-      (_, i) => i !== index
-    )
-
-    setModel({
-      ...model,
-      compatibilityRelations: updatedRelations
-    })
-  }
+  const fields = [
+    {
+      name: "practiceA",
+      label: "Práctica A",
+      placeholder: "Practice A",
+      type: "text",
+      flex: "1 1 30%",
+    },
+    {
+      name: "practiceB",
+      label: "Práctica B",
+      placeholder: "Practice B",
+      type: "text",
+      flex: "1 1 30%",
+    },
+    {
+      name: "type",
+      label: "Tipo",
+      placeholder: "Tipo de relación",
+      type: "text",
+      flex: "1 1 30%",
+    },
+  ];
 
   return (
-    <div>
-
-      <h3>Relaciones de Compatibilidad</h3>
-
-      {(model.compatibilityRelations || []).map((r, i) => (
-
-        <div style={{border:"1px solid #ccc", padding:"12px", margin:"12px"}}  key={i}>
-
-          <div className="form-grid">
-
-            <div className="form-field">
-              <input
-                value={r.practiceA || ""}
-                onChange={e => updateRelation(i, "practiceA", e.target.value)}
-                placeholder="Practice A"
-              />
-            </div>
-
-            <div className="form-field">
-
-              <input
-                value={r.practiceB || ""}
-                onChange={e => updateRelation(i, "practiceB", e.target.value)}
-                placeholder="Practice B"
-              />
-            </div>
-
-            <div className="form-field">
-              <input
-                value={r.type || ""}
-                onChange={e => updateRelation(i, "type", e.target.value)}
-                placeholder="Tipo"
-              />
-            </div>
-          </div>
-          <button onClick={() => removeRelation(i)}>
-            Eliminar
-          </button>
-
-        </div>
-
-      ))}
-
-      <button style={{marginTop:"30px"}} onClick={addRelation}>
-        Añadir Relación
-      </button>
-
-    </div>
-  )
+    <FormSection
+      title="Relaciones de Compatibilidad"
+      helpText="Define cómo se relacionan las prácticas entre sí dentro del proceso híbrido."
+      items={relations}
+      setItems={setItems}
+      fields={fields}
+      fieldErrors={fieldErrors}
+      setFieldErrors={setFieldErrors}
+      layout="row"
+      addButtonText="Añadir Relación"
+    />
+  );
 }
 
-export default RelationsSection
+export default RelationsSection;

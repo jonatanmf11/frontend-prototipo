@@ -111,6 +111,12 @@ export default function CAFEditor() {
         />
       </h2>
 
+      <p className="section-help">
+        Marca los elementos que tienen reglas de adaptación documentadas.
+        La métrica CAF se calcula en un rango de <strong>0 a 1</strong>, donde:
+        0 indica ausencia de documentación y 1 indica cobertura completa.
+      </p>
+
       {renderSection(
         "Actividades",
         "activities",

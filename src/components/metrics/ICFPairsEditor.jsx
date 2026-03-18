@@ -1,5 +1,6 @@
 import { useModelContext } from "../../context/ModelContext";
 import InfoButtonModern from "../../utils/InfoButtonModern";
+import  "../../styles/ModelEditor.css";
 
 export default function ICFPairsEditor() {
 
@@ -85,6 +86,11 @@ export default function ICFPairsEditor() {
         />
       </h2>
 
+      <p className="section-help">
+        Ingresa pares de artefactos ágiles y tradicionales que cumplan funciones similares.
+        Asigna un valor de equivalencia entre 0 (sin relación) y 1 (totalmente equivalentes).
+      </p>
+
       <table border="1" cellPadding="5">
 
         <thead>
@@ -143,7 +149,7 @@ export default function ICFPairsEditor() {
 
               <td>
 
-                <button onClick={() => deletePair(index)}>
+                <button className="button-remove" onClick={() => deletePair(index)}>
                   Eliminar
                 </button>
 

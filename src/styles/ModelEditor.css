@@ -237,6 +237,7 @@ textarea:focus {
   font-size: 18px;
   color: #94a3b8;
   margin-bottom: 15px;
+  text-align: justify;
 }
 
 .tooltip {
@@ -299,4 +300,18 @@ textarea:focus {
   background: #3b82f6;
   border-radius: 4px;
   transition: width 0.3s ease;
+}
+
+.button-remove {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  height: 40px;
+}
+
+.button-remove:hover {
+  background-color: #e74c3c; /* mismo color */
+  color: white;
+  cursor: pointer;
 }

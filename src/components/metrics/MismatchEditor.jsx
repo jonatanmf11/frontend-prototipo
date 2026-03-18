@@ -34,6 +34,13 @@ export default function MismatchEditor() {
         />
       </h2>
 
+      <p className="section-help">
+        Asigna valores a las características del proyecto y a cada enfoque de desarrollo.
+        Los valores suelen definirse en una escala de <strong>0 a 5</strong> (o similar), donde:
+        valores más altos representan mayor presencia de la característica.
+        El resultado final indica el nivel de desajuste, donde valores más altos implican menor alineación.
+      </p>
+
       <div className="table-wrapper">
 
         <table className="mismatch-table">

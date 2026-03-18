@@ -29,7 +29,7 @@ export default function EvaluationPanel() {
 
     } catch (err) {
       console.error(err)
-      setError("Error running rule evaluation")
+      setError("Error al ejecutar la evaluación de reglas")
     }
   }
 
@@ -45,7 +45,7 @@ export default function EvaluationPanel() {
 
     } catch (err) {
       console.error(err)
-      setError("Error running metrics evaluation")
+      setError("Error al ejecutar la evaluación de reglas")
     }
   }
 
@@ -77,14 +77,14 @@ export default function EvaluationPanel() {
     } catch (err) {
 
       console.error(err)
-      setError("Error running full evaluation")
+      setError("Error al ejecutar la evaluación completa")
 
     }
   }
 
   return (
 
-   <div className="section-card section-general evaluation-panel">
+   <div className="section-card">
 
       <h2 className="evaluation-title">
         Evaluación del Modelo
@@ -179,11 +179,11 @@ export default function EvaluationPanel() {
         <div className="violations-section">
 
           <h3>
-            Rule Violations ({violations.violations_count})
+            Violaciones de Reglas ({violations.violations_count})
           </h3>
 
           {violations.violations_count === 0 && (
-            <p>No violations ✔</p>
+            <p>No hay violaciones ✅</p>
           )}
 
           {violations.violations_count > 0 && (

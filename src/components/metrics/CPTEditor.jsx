@@ -1,5 +1,6 @@
 import { useModelContext } from "../../context/ModelContext"
 import InfoButtonModern from "../../utils/InfoButtonModern";
+import  "../../styles/ModelEditor.css";
 
 export default function CPTEditor() {
 
@@ -47,6 +48,7 @@ export default function CPTEditor() {
 
         <h3>{title}</h3>
 
+
         {cptData[section].map((item, i) => (
 
           <div key={i} style={{ display: "flex", gap: 10, marginBottom: 5 }}>
@@ -57,7 +59,7 @@ export default function CPTEditor() {
               style={{ width: 300 }}
             />
 
-            <button onClick={() => removeItem(section, i)}>
+            <button className="button-remove" onClick={() => removeItem(section, i)}>
               Eliminar
             </button>
 
@@ -85,6 +87,12 @@ export default function CPTEditor() {
           content="Evalúa directamente la equivalencia y coherencia entre artefactos ágiles y plan-driven requeridos por el proceso híbrido."
         />
       </h2>
+
+      <p className="section-help">
+        Ingresa los productos de trabajo de cada enfoque. Estos serán comparados para evaluar su compatibilidad.
+        La métrica CPT se calcula en un rango de <strong>0 a 1</strong>, donde:
+        0 indica ausencia de correspondencia y 1 indica compatibilidad total.
+      </p>
 
       {renderList("Productos de trabajo ágil", "agileWorkProducts")}
 

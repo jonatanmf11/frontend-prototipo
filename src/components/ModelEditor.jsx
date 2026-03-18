@@ -16,51 +16,52 @@ import EvaluationPanel from "./EvaluationPanel";
 import "../styles/ModelEditor.css";
 
 export default function ModelEditor() {
-
   const modelHook = useModelContext();
-  const { loading, model } = modelHook;
+  const { loading, model, setModel } = modelHook;
 
   const [step, setStep] = useState(1);
-  const [error, setError] = useState("");
-  const [evaluationType, setEvaluationType] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const totalSteps = 6;
 
   if (loading) return <p>Cargando modelo...</p>;
 
+  // Validación por paso
   const validateStep = () => {
-    setError("");
+    const errors = {};
 
     switch (step) {
       case 1:
-        if (!model.name) {
-          setError("Debes ingresar el nombre del proceso.");
-          return false;
-        }
-        return true;
-
+        if (!model.id) errors.id = true;
+        if (!model.name) errors.name = true;
+        break;
       case 2:
-        if (!model.practices || model.practices.length === 0) {
-          setError("Debes agregar al menos una práctica.");
-          return false;
-        }
-        return true;
-
+        if (!model.practices || model.practices.length === 0)
+          errors.practices = true;
+        break;
       case 3:
-        if (!model.compatibilityRelations || model.compatibilityRelations.length === 0) {
-          setError("Debes definir relaciones entre prácticas.");
-          return false;
-        }
-        return true;
-
+        if (!model.compatibilityRelations || model.compatibilityRelations.length === 0)
+          errors.relations = true;
+        break;
       case 4:
-        if (!model.projectContext || !model.projectContext.projectSize) {
-          setError("Debes definir el contexto del proyecto.");
-          return false;
-        }
-        return true;
-
+        if (!model.projectContext || !model.projectContext.projectSize)
+          errors.context = true;
+        break;
       default:
-        return true;
+        break;
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Cuando el usuario escribe, eliminar el error del campo correspondiente
+  const handleFieldChange = (field, value) => {
+    setModel({ ...model, [field]: value });
+
+    if (fieldErrors[field]) {
+      const newErrors = { ...fieldErrors };
+      delete newErrors[field];
+      setFieldErrors(newErrors);
     }
   };
 
@@ -74,21 +75,37 @@ export default function ModelEditor() {
   };
 
   const renderStep = () => {
-
     switch (step) {
-
       case 1:
-        return <div className="section-card"><GeneralInfoSection {...modelHook} /></div>;
-
+        return (
+          <div className="section-card">
+            <GeneralInfoSection
+              step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange}
+            />
+          </div>
+        );
       case 2:
-        return <div className="section-card"><PracticesSection {...modelHook} /></div>;
-
+        return <div className="section-card"><PracticesSection   step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange} /></div>;
       case 3:
-        return <div className="section-card"><RelationsSection {...modelHook} /></div>;
-
+        return <div className="section-card"><RelationsSection   step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange} /></div>;
       case 4:
-        return <div className="section-card"><ContextSection {...modelHook} /></div>;
-
+        return <div className="section-card"><ContextSection   step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange} /></div>;
       case 5:
         return (
           <>
@@ -98,15 +115,12 @@ export default function ModelEditor() {
             <div className="section-card"><MismatchEditor /></div>
           </>
         );
-
       case 6:
         return (
-          <div className="editor-container">      
-                <EvaluationPanel />
-          
-              </div>
+          <div className="editor-container">
+            <EvaluationPanel />
+          </div>
         );
-
       default:
         return null;
     }
@@ -114,29 +128,16 @@ export default function ModelEditor() {
 
   return (
     <div className="editor-container">
-
-      <h1 className="editor-title">
-        Herramienta de Evaluación - CHAPLIN
-      </h1>
-
-      <p className="editor-text">
-        Paso {step} de {totalSteps}
-      </p>
+      <h1 className="editor-title">Herramienta de Evaluación - CHAPLIN</h1>
+      <p className="editor-text">Paso {step} de {totalSteps}</p>
 
       <div className="progress-bar">
-  <div
-    className="progress"
-    style={{ width: `${(step / totalSteps) * 100}%` }}
-  />
-</div>
-
-
-      {error && <p style={{ color: "salmon" }}>{error}</p>}
+        <div className="progress" style={{ width: `${(step / totalSteps) * 100}%` }} />
+      </div>
 
       {renderStep()}
 
       <div className="navigation-buttons">
-
         {step > 1 && (
           <button className="button-secondary" onClick={handleBack}>
             Anterior
@@ -148,9 +149,7 @@ export default function ModelEditor() {
             Siguiente
           </button>
         )}
-
       </div>
-
     </div>
   );
 }
