@@ -55,26 +55,35 @@ function RelationsSection() {
 
       {(model.compatibilityRelations || []).map((r, i) => (
 
-        <div key={i}>
+        <div style={{border:"1px solid #ccc", padding:"12px", margin:"12px"}}  key={i}>
 
-          <input
-            value={r.practiceA || ""}
-            onChange={e => updateRelation(i, "practiceA", e.target.value)}
-            placeholder="Practice A"
-          />
+          <div className="form-grid">
 
-          <input
-            value={r.practiceB || ""}
-            onChange={e => updateRelation(i, "practiceB", e.target.value)}
-            placeholder="Practice B"
-          />
+            <div className="form-field">
+              <input
+                value={r.practiceA || ""}
+                onChange={e => updateRelation(i, "practiceA", e.target.value)}
+                placeholder="Practice A"
+              />
+            </div>
 
-          <input
-            value={r.type || ""}
-            onChange={e => updateRelation(i, "type", e.target.value)}
-            placeholder="Tipo"
-          />
+            <div className="form-field">
 
+              <input
+                value={r.practiceB || ""}
+                onChange={e => updateRelation(i, "practiceB", e.target.value)}
+                placeholder="Practice B"
+              />
+            </div>
+
+            <div className="form-field">
+              <input
+                value={r.type || ""}
+                onChange={e => updateRelation(i, "type", e.target.value)}
+                placeholder="Tipo"
+              />
+            </div>
+          </div>
           <button onClick={() => removeRelation(i)}>
             Eliminar
           </button>
@@ -83,7 +92,7 @@ function RelationsSection() {
 
       ))}
 
-      <button onClick={addRelation}>
+      <button style={{marginTop:"30px"}} onClick={addRelation}>
         Añadir Relación
       </button>
 

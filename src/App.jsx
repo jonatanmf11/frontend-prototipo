@@ -9,8 +9,6 @@ function App() {
 
       <ModelEditor />
 
-      <EvaluationPanel />
-
     </div>
   )
 

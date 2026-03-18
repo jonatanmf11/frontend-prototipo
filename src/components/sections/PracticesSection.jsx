@@ -325,7 +325,7 @@ function PracticesSection() {
 
           <div style={{marginTop:"10px"}}>
 
-            <h4>Rules</h4>
+            <h4>Reglas</h4>
 
             {(p.rules || []).map((rule, j) => (
 
@@ -346,7 +346,7 @@ function PracticesSection() {
             ))}
 
             <button onClick={() => addRule(i)}>
-              Añadir Rule
+              Añadir Regla
             </button>
 
           </div>
@@ -355,7 +355,7 @@ function PracticesSection() {
 
           <div style={{marginTop:"10px"}}>
 
-            <h4>Artifacts</h4>
+            <h4>Artefactos</h4>
 
             {(p.artifacts || []).map((a, j) => (
 
@@ -388,7 +388,7 @@ function PracticesSection() {
             ))}
 
             <button onClick={() => addArtifact(i)}>
-              Añadir Artifact
+              Añadir Artefacto
             </button>
 
           </div>

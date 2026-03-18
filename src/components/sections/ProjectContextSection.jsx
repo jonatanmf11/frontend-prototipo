@@ -28,26 +28,26 @@ function ProjectContextSection() {
     <div>
 
       <h3>Contexto del Proyecto</h3>
+      <div className="form-grid">
+        <div className="form-field">
+          <input
+            value={context.projectSize || ""}
+            onChange={e => updateContext("projectSize", e.target.value)}
+            placeholder="Tamaño del Proyecto"
+          />
+        </div>
 
-      <div>
-        <input
-          value={context.projectSize || ""}
-          onChange={e => updateContext("projectSize", e.target.value)}
-          placeholder="Tamaño del Proyecto"
-        />
+        <div className="form-field"> 
+          <input
+            value={context.criticality || ""}
+            onChange={e => updateContext("criticality", e.target.value)}
+            placeholder="Criticidad"
+          />
+        </div>
+
       </div>
+    </div>
 
-      <div>
-        <input
-          value={context.criticality || ""}
-          onChange={e => updateContext("criticality", e.target.value)}
-          placeholder="Criticidad"
-        />
-      </div>
-
-       </div>
-
-     
 
   )
 }

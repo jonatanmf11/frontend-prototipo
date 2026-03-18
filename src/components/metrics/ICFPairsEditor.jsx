@@ -1,4 +1,5 @@
-import { useModelContext } from "../../context/ModelContext"
+import { useModelContext } from "../../context/ModelContext";
+import InfoButtonModern from "../../utils/InfoButtonModern";
 
 export default function ICFPairsEditor() {
 
@@ -74,15 +75,21 @@ export default function ICFPairsEditor() {
 
   return (
 
-    <div style={{ marginTop:20 }}>
+    <div style={{ marginTop: 20 }}>
 
-      <h3>Equivalencias ICF</h3>
+      <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        Índice de Consistencia Funcional (ICF)
+        <InfoButtonModern
+          title="Índice de Consistencia Funcional"
+          content="Evalúa la equivalencia funcional entre artefactos ágiles y tradicionales emparejados."
+        />
+      </h2>
 
       <table border="1" cellPadding="5">
 
         <thead>
           <tr>
-            <th>Artefacto agil</th>
+            <th>Artefacto ágil</th>
             <th>Artefacto tradicional</th>
             <th>Equivalencia</th>
             <th>Acciones</th>
@@ -91,7 +98,7 @@ export default function ICFPairsEditor() {
 
         <tbody>
 
-          {icfPairs.map((pair,index)=>(
+          {icfPairs.map((pair, index) => (
 
             <tr key={index}>
 
@@ -99,8 +106,8 @@ export default function ICFPairsEditor() {
 
                 <input
                   value={pair.agile?.name || ""}
-                  onChange={(e)=>
-                    updateAgileName(index,e.target.value)
+                  onChange={(e) =>
+                    updateAgileName(index, e.target.value)
                   }
                   placeholder="Agile Artifact"
                 />
@@ -111,8 +118,8 @@ export default function ICFPairsEditor() {
 
                 <input
                   value={pair.traditional?.name || ""}
-                  onChange={(e)=>
-                    updateTraditionalName(index,e.target.value)
+                  onChange={(e) =>
+                    updateTraditionalName(index, e.target.value)
                   }
                   placeholder="Traditional Artifact"
                 />
@@ -127,8 +134,8 @@ export default function ICFPairsEditor() {
                   min="0"
                   max="1"
                   value={pair.equivalence ?? ""}
-                  onChange={(e)=>
-                    updateEquivalence(index,e.target.value)
+                  onChange={(e) =>
+                    updateEquivalence(index, e.target.value)
                   }
                 />
 
@@ -136,7 +143,7 @@ export default function ICFPairsEditor() {
 
               <td>
 
-                <button onClick={()=>deletePair(index)}>
+                <button onClick={() => deletePair(index)}>
                   Eliminar
                 </button>
 
@@ -150,7 +157,7 @@ export default function ICFPairsEditor() {
 
       </table>
 
-      <button onClick={addPair} style={{marginTop:10}}>
+      <button onClick={addPair} style={{ marginTop: 10 }}>
         Añadir par
       </button>
 
@@ -158,3 +165,4 @@ export default function ICFPairsEditor() {
 
   )
 }
+

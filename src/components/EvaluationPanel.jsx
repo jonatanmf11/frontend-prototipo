@@ -92,10 +92,6 @@ export default function EvaluationPanel() {
 
       <div className="button-group">
 
-        <button onClick={runMetrics}>
-          Evaluar métricas
-        </button>
-
         <button onClick={runRules}>
           Evaluar reglas OCL
         </button>

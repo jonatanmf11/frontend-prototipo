@@ -1,14 +1,15 @@
 import { useModelContext } from "../../context/ModelContext"
+import InfoButtonModern from "../../utils/InfoButtonModern";
 
-export default function CAFEditor(){
+export default function CAFEditor() {
 
   const { cafDocumentation, setCafDocumentation } = useModelContext()
 
-  if(!cafDocumentation){
+  if (!cafDocumentation) {
     return <p>Loading CAF data...</p>
   }
 
-  const updateItem = (section,index,field,value)=>{
+  const updateItem = (section, index, field, value) => {
 
     const updated = { ...cafDocumentation }
 
@@ -21,7 +22,7 @@ export default function CAFEditor(){
 
   }
 
-  const toggleDocumented = (section,index)=>{
+  const toggleDocumented = (section, index) => {
 
     const updated = { ...cafDocumentation }
 
@@ -32,11 +33,11 @@ export default function CAFEditor(){
 
   }
 
-  const renderSection = (title,section,fields)=>{
+  const renderSection = (title, section, fields) => {
 
     return (
 
-      <div style={{marginTop:20}}>
+      <div style={{ marginTop: 20 }}>
 
         <h4>{title}</h4>
 
@@ -45,7 +46,7 @@ export default function CAFEditor(){
           <thead>
             <tr>
 
-              {fields.map(f=>(
+              {fields.map(f => (
                 <th key={f}>{f}</th>
               ))}
 
@@ -56,18 +57,18 @@ export default function CAFEditor(){
 
           <tbody>
 
-            {cafDocumentation[section].map((item,i)=>(
+            {cafDocumentation[section].map((item, i) => (
 
               <tr key={i}>
 
-                {fields.map(f=>(
+                {fields.map(f => (
 
                   <td key={f}>
 
                     <input
                       value={item[f] || ""}
-                      onChange={(e)=>
-                        updateItem(section,i,f,e.target.value)
+                      onChange={(e) =>
+                        updateItem(section, i, f, e.target.value)
                       }
                     />
 
@@ -80,7 +81,7 @@ export default function CAFEditor(){
                   <input
                     type="checkbox"
                     checked={item.documented}
-                    onChange={()=>toggleDocumented(section,i)}
+                    onChange={() => toggleDocumented(section, i)}
                   />
 
                 </td>
@@ -101,18 +102,23 @@ export default function CAFEditor(){
 
   return (
 
-    <div style={{marginTop:40}}>
+    <div style={{ marginTop: 40 }}>
 
-      <h3>CAF cobertura de documentación</h3>
+      <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}> Cobertura de Adaptaci&oacute;n Formal (CAF)
+        <InfoButtonModern
+          title="Cobertura de Adaptación Formal"
+          content="Evalúa si las reglas de adaptación están explícitamente documentadas."
+        />
+      </h2>
 
       {renderSection(
-        "Activities",
+        "Actividades",
         "activities",
         ["id"]
       )}
 
       {renderSection(
-        "Rules",
+        "Reglas",
         "rules",
         ["practiceId"]
       )}
@@ -124,19 +130,19 @@ export default function CAFEditor(){
       )}
 
       {renderSection(
-        "Artifacts",
+        "Artefactos",
         "artifacts",
         ["id"]
       )}
 
       {renderSection(
-        "Sequence",
+        "Secuencia",
         "sequence",
-        ["practiceA","practiceB"]
+        ["practiceA", "practiceB"]
       )}
 
       {renderSection(
-        "Metrics",
+        "Metricas",
         "metrics",
         ["name"]
       )}
