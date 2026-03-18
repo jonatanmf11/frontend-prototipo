@@ -1,16 +1,18 @@
 import { useModelContext } from "../../context/ModelContext"
+import InfoButtonModern from "../../utils/InfoButtonModern";
+import  "../../styles/ModelEditor.css";
 
-export default function CPTEditor(){
+export default function CPTEditor() {
 
   const { cptData, setCptData } = useModelContext()
 
-  if(!cptData){
+  if (!cptData) {
     return <p>Cargando productos de trabajo...</p>
   }
 
-  const updateValue = (section,index,value)=>{
+  const updateValue = (section, index, value) => {
 
-    const updated = {...cptData}
+    const updated = { ...cptData }
 
     updated[section][index] = value
 
@@ -18,9 +20,9 @@ export default function CPTEditor(){
 
   }
 
-  const addItem = (section)=>{
+  const addItem = (section) => {
 
-    const updated = {...cptData}
+    const updated = { ...cptData }
 
     updated[section].push("")
 
@@ -28,35 +30,36 @@ export default function CPTEditor(){
 
   }
 
-  const removeItem = (section,index)=>{
+  const removeItem = (section, index) => {
 
-    const updated = {...cptData}
+    const updated = { ...cptData }
 
-    updated[section].splice(index,1)
+    updated[section].splice(index, 1)
 
     setCptData(updated)
 
   }
 
-  const renderList = (title,section)=>{
+  const renderList = (title, section) => {
 
-    return(
+    return (
 
-      <div style={{marginTop:20}}>
+      <div style={{ marginTop: 20 }}>
 
         <h3>{title}</h3>
 
-        {cptData[section].map((item,i)=>(
 
-          <div key={i} style={{display:"flex",gap:10,marginBottom:5}}>
+        {cptData[section].map((item, i) => (
+
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 5 }}>
 
             <input
               value={item}
-              onChange={(e)=>updateValue(section,i,e.target.value)}
-              style={{width:300}}
+              onChange={(e) => updateValue(section, i, e.target.value)}
+              style={{ width: 300 }}
             />
 
-            <button onClick={()=>removeItem(section,i)}>
+            <button className="button-remove" onClick={() => removeItem(section, i)}>
               Eliminar
             </button>
 
@@ -64,7 +67,7 @@ export default function CPTEditor(){
 
         ))}
 
-        <button onClick={()=>addItem(section)}>
+        <button onClick={() => addItem(section)}>
           Añadir
         </button>
 
@@ -74,15 +77,26 @@ export default function CPTEditor(){
 
   }
 
-  return(
+  return (
 
-    <div style={{marginTop:40}}>
+    <div style={{ marginTop: 40 }}>
 
-      <h2>Compatibilidad de productos de trabajo (CPT)</h2>
+      <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>Compatibilidad de productos de trabajo (CPT)
+        <InfoButtonModern
+          title="Compatibilidad de Productos de Trabajo"
+          content="Evalúa directamente la equivalencia y coherencia entre artefactos ágiles y plan-driven requeridos por el proceso híbrido."
+        />
+      </h2>
 
-      {renderList("Agile Work Products","agileWorkProducts")}
+      <p className="section-help">
+        Ingresa los productos de trabajo de cada enfoque. Estos serán comparados para evaluar su compatibilidad.
+        La métrica CPT se calcula en un rango de <strong>0 a 1</strong>, donde:
+        0 indica ausencia de correspondencia y 1 indica compatibilidad total.
+      </p>
 
-      {renderList("Plan-Driven Work Products","planDrivenWorkProducts")}
+      {renderList("Productos de trabajo ágil", "agileWorkProducts")}
+
+      {renderList("Productos de trabajo Plan-Driven", "planDrivenWorkProducts")}
 
     </div>
 

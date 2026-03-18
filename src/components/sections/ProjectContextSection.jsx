@@ -1,55 +1,56 @@
-import { useModelContext } from "../../context/ModelContext"
+import { useModelContext } from "../../context/ModelContext";
+import FormSection from "../../utils/FormSection";
 
-function ProjectContextSection() {
-
-  const { model, setModel } = useModelContext()
+function ProjectContextSection({ fieldErrors, setFieldErrors }) {
+  const { model, setModel } = useModelContext();
 
   const context = model.projectContext || {
     projectSize: "",
     criticality: "",
     regulatoryConstraints: false,
-    distributedTeam: false
-  }
+    distributedTeam: false,
+  };
 
-  const updateContext = (field, value) => {
+  const setItems = (updatedItems) => {
+    if (updatedItems?.length > 0) {
+      setModel({
+        ...model,
+        projectContext: updatedItems[0],
+      });
+    }
+  };
 
-    setModel({
-      ...model,
-      projectContext: {
-        ...context,
-        [field]: value
-      }
-    })
-
-  }
+  const fields = [
+    {
+      name: "projectSize",
+      label: "Tamaño del Proyecto",
+      placeholder: "Tamaño del Proyecto",
+      type: "text",
+      flex: "1 1 45%",
+    },
+    {
+      name: "criticality",
+      label: "Criticidad",
+      placeholder: "Criticidad",
+      type: "text",
+      flex: "1 1 45%",
+    },
+  ];
 
   return (
-
-    <div>
-
-      <h3>Contexto del Proyecto</h3>
-
-      <div>
-        <input
-          value={context.projectSize || ""}
-          onChange={e => updateContext("projectSize", e.target.value)}
-          placeholder="Tamaño del Proyecto"
-        />
-      </div>
-
-      <div>
-        <input
-          value={context.criticality || ""}
-          onChange={e => updateContext("criticality", e.target.value)}
-          placeholder="Criticidad"
-        />
-      </div>
-
-       </div>
-
-     
-
-  )
+    <FormSection
+      title="Contexto del Proyecto"
+      helpText="Define las características del entorno del proyecto."
+      items={[context]}
+      setItems={setItems}
+      fields={fields}
+      fieldErrors={fieldErrors}
+      setFieldErrors={setFieldErrors}
+      layout="row"
+      showAddButton={false}
+      showRemoveButton={false}
+    />
+  );
 }
 
-export default ProjectContextSection
+export default ProjectContextSection;
