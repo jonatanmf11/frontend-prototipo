@@ -6,10 +6,23 @@ function RelationsSection({ fieldErrors, setFieldErrors }) {
 
   const relations = model.compatibilityRelations || [];
 
+ 
+  const practiceOptions = (model.practices || []).map(p => ({
+    value: p.id,
+    label: `${p.id} - ${p.name}`
+  }));
+
+  
   const setItems = (updatedItems) => {
+
+    const normalized = updatedItems.map(item => ({
+      practiceA: item.practiceA || "",   
+      practiceB: item.practiceB || "",   
+    }));
+
     setModel({
       ...model,
-      compatibilityRelations: updatedItems,
+      compatibilityRelations: normalized,
     });
   };
 
@@ -17,30 +30,23 @@ function RelationsSection({ fieldErrors, setFieldErrors }) {
     {
       name: "practiceA",
       label: "Práctica A",
-      placeholder: "Practice A",
-      type: "text",
-      flex: "1 1 30%",
+      type: "select",
+      options: practiceOptions,
+      flex: "1 1 45%",
     },
     {
       name: "practiceB",
       label: "Práctica B",
-      placeholder: "Practice B",
-      type: "text",
-      flex: "1 1 30%",
-    },
-    {
-      name: "type",
-      label: "Tipo",
-      placeholder: "Tipo de relación",
-      type: "text",
-      flex: "1 1 30%",
-    },
+      type: "select",
+      options: practiceOptions,
+      flex: "1 1 45%",
+    }
   ];
 
   return (
     <FormSection
       title="Relaciones de Compatibilidad"
-      helpText="Define cómo se relacionan las prácticas entre sí dentro del proceso híbrido."
+      helpText="Selecciona prácticas existentes para definir relaciones secuenciales."
       items={relations}
       setItems={setItems}
       fields={fields}
