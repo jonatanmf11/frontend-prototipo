@@ -31,20 +31,48 @@ export default function ModelEditor() {
 
     switch (step) {
       case 1:
-        if (!model.id) errors.id = true;
-        if (!model.name) errors.name = true;
+        if (!model.id) errors["0_id"] = true;
+        if (!model.name) errors["0_name"] = true;
         break;
       case 2:
         if (!model.practices || model.practices.length === 0)
           errors.practices = true;
         break;
       case 3:
-        if (!model.compatibilityRelations || model.compatibilityRelations.length === 0)
+        const relations = model.compatibilityRelations || [];
+
+        if (relations.length === 0) {
           errors.relations = true;
+        }
+
+        relations.forEach((rel, index) => {
+
+          if (!rel.practiceA) {
+            errors[`${index}_practiceA`] = true;
+          }
+
+          if (!rel.practiceB) {
+            errors[`${index}_practiceB`] = true;
+          }
+
+          if (!rel.type) {
+            errors[`${index}_type`] = true;
+          }
+
+        });
+
         break;
       case 4:
-        if (!model.projectContext || !model.projectContext.projectSize)
-          errors.context = true;
+        const context = model.projectContext || {};
+
+        if (!context.projectSize) {
+          errors["0_projectSize"] = true;
+        }
+
+        if (!context.criticality) {
+          errors["0_criticality"] = true;
+        }
+
         break;
       default:
         break;
@@ -89,23 +117,23 @@ export default function ModelEditor() {
           </div>
         );
       case 2:
-        return <div className="section-card"><PracticesSection   step={step}
-              fieldErrors={fieldErrors}
-              model={model}
-              setModel={setModel}
-              handleFieldChange={handleFieldChange} /></div>;
+        return <div className="section-card"><PracticesSection step={step}
+          fieldErrors={fieldErrors}
+          model={model}
+          setModel={setModel}
+          handleFieldChange={handleFieldChange} /></div>;
       case 3:
-        return <div className="section-card"><RelationsSection   step={step}
-              fieldErrors={fieldErrors}
-              model={model}
-              setModel={setModel}
-              handleFieldChange={handleFieldChange} /></div>;
+        return <div className="section-card"><RelationsSection step={step}
+          fieldErrors={fieldErrors}
+          model={model}
+          setModel={setModel}
+          handleFieldChange={handleFieldChange} /></div>;
       case 4:
-        return <div className="section-card"><ContextSection   step={step}
-              fieldErrors={fieldErrors}
-              model={model}
-              setModel={setModel}
-              handleFieldChange={handleFieldChange} /></div>;
+        return <div className="section-card"><ContextSection step={step}
+          fieldErrors={fieldErrors}
+          model={model}
+          setModel={setModel}
+          handleFieldChange={handleFieldChange} /></div>;
       case 5:
         return (
           <>

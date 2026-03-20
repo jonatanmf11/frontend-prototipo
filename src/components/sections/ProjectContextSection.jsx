@@ -38,18 +38,28 @@ function ProjectContextSection({ fieldErrors, setFieldErrors }) {
   ];
 
   return (
-    <FormSection
-      title="Contexto del Proyecto"
-      helpText="Define las características del entorno del proyecto."
-      items={[context]}
-      setItems={setItems}
-      fields={fields}
-      fieldErrors={fieldErrors}
-      setFieldErrors={setFieldErrors}
-      layout="row"
-      showAddButton={false}
-      showRemoveButton={false}
-    />
+    <div>
+
+      {(fieldErrors["0_projectSize"] || fieldErrors["0_criticality"]) && (
+        <p className="error">
+          Debes completar los datos del contexto del proyecto
+        </p>
+      )}
+
+      <FormSection
+        title="Contexto del Proyecto"
+        helpText="Define las características del entorno del proyecto."
+        items={[context]}
+        setItems={setItems}
+        fields={fields}
+        fieldErrors={fieldErrors}
+        setFieldErrors={setFieldErrors}
+        layout="row"
+        showAddButton={false}
+        showRemoveButton={false}
+      />
+
+    </div>
   );
 }
 

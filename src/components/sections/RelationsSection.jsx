@@ -6,18 +6,17 @@ function RelationsSection({ fieldErrors, setFieldErrors }) {
 
   const relations = model.compatibilityRelations || [];
 
- 
+  
   const practiceOptions = (model.practices || []).map(p => ({
     value: p.id,
-    label: `${p.id} - ${p.name}`
+    label: `${p.id} - ${p.name}` 
   }));
 
   
   const setItems = (updatedItems) => {
-
     const normalized = updatedItems.map(item => ({
-      practiceA: item.practiceA || "",   
-      practiceB: item.practiceB || "",   
+      ...item,
+      type: "Sequential"
     }));
 
     setModel({
@@ -30,7 +29,7 @@ function RelationsSection({ fieldErrors, setFieldErrors }) {
     {
       name: "practiceA",
       label: "Práctica A",
-      type: "select",
+      type: "select", 
       options: practiceOptions,
       flex: "1 1 45%",
     },
@@ -43,10 +42,18 @@ function RelationsSection({ fieldErrors, setFieldErrors }) {
     }
   ];
 
-  return (
+return (
+  <>
+    {fieldErrors.relations && (
+      <p style={{ color: "#e74c3c", marginBottom: "10px", fontWeight: 500 }}>
+        Debes agregar al menos una relación de compatibilidad
+      </p>
+    )}
+
     <FormSection
       title="Relaciones de Compatibilidad"
       helpText="Selecciona prácticas existentes para definir relaciones secuenciales."
+      infoButton="Define una relación secuencial entre prácticas. La Práctica B se ejecuta después de la Práctica A, estableciendo un orden dentro del proceso."
       items={relations}
       setItems={setItems}
       fields={fields}
@@ -55,7 +62,8 @@ function RelationsSection({ fieldErrors, setFieldErrors }) {
       layout="row"
       addButtonText="Añadir Relación"
     />
-  );
+  </>
+);
 }
 
 export default RelationsSection;
