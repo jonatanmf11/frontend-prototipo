@@ -53,9 +53,9 @@ export default function PracticesSection() {
   };
 
   return (
+
     <div className="section-card">
       <h3>Prácticas</h3>
-
       {practices.map((p, i) => (
         <div
           key={i}

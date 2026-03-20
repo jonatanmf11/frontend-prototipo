@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useModelContext } from "../context/ModelContext"
 import "../styles/EvaluationPanel.css"
+import InfoButtonModern from "../utils/InfoButtonModern";
 
 import {
   evaluateMetrics,
@@ -16,6 +17,40 @@ export default function EvaluationPanel() {
   const [violations, setViolations] = useState(null)
   const [igc, setIGC] = useState(null)
   const [error, setError] = useState(null)
+  const metricsInfo = {
+    ICS: {
+      title: "Índice de Compatibilidad de Secuencia (ICS)",
+      content: "Detecta conflictos de tiempo y lógica entre las actividades iterativas (ágiles) y las lineales (tradicionales)."
+    },
+    ICF: {
+      title: "Índice de Consistencia Funcional (ICF)",
+      content: "Mide el ajuste y alineación entre artefactos ágiles y tradicionales para evitar redundancias o conflictos documentales."
+    },
+    NSR: {
+      title: "Nivel de Solapamiento de Roles (NSR)",
+      content: "Evalúa la claridad de las responsabilidades para detectar tareas duplicadas o vacíos de autoridad en el equipo."
+    },
+    CAF: {
+      title: "Cobertura de Adaptación Formal (CAF)",
+      content: "Mide qué porcentaje del proceso híbrido está documentado formalmente para garantizar que sea sostenible y replicable"
+    },
+    CPT: {
+      title: "Compatibilidad de Productos de Trabajo (CPT)",
+      content: "Determina la proporción de entregables que son compartidos y útiles tanto para la parte ágil como para la tradicional de tu proceso."
+    },
+    MISMATCH_AGILE: {
+      title: "Puntaje de desajuste de metodología (AGILE)",
+      content: "Cuantifica qué tan bien se adapta la metodología elegida a las necesidades específicas (como flexibilidad o control de riesgos) de tu proyecto."
+    },
+    MISMATCH_TRADITIONAL: {
+      title: "Puntaje de desajuste de metodología  (TRADITIONAL)",
+      content: "Cuantifica qué tan bien se adapta la metodología elegida a las necesidades específicas (como flexibilidad o control de riesgos) de tu proyecto."
+    },
+    MISMATCH_HYBRID: {
+      title: "Puntaje de desajuste de metodología (HYBRID)",
+      content: "Cuantifica qué tan bien se adapta la metodología elegida a las necesidades específicas (como flexibilidad o control de riesgos) de tu proyecto."
+    }
+  };
 
   const runRules = async () => {
     try {
@@ -84,7 +119,7 @@ export default function EvaluationPanel() {
 
   return (
 
-   <div className="section-card">
+    <div className="section-card">
 
       <h2 className="evaluation-title">
         Evaluación del Modelo
@@ -114,7 +149,14 @@ export default function EvaluationPanel() {
 
         <div className="igc-section">
 
-          <h3>IGC Score</h3>
+          <h3 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            Resultado IGC - (Índice Global de Consistencia)
+
+            <InfoButtonModern
+              title="Índice Global de Consistencia (IGC)"
+              content="Métrica global que integra los resultados de consistencia del modelo, combinando métricas individuales y cumplimiento de reglas. Valores cercanos a 1 indican alta consistencia."
+            />
+          </h3>
 
           <p className="igc-score">
             {igc}
@@ -155,7 +197,25 @@ export default function EvaluationPanel() {
                 return (
 
                   <tr key={name}>
-                    <td>{name}</td>
+
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+
+                        {/* Nombre con ancho fijo */}
+                        <span style={{ minWidth: "300px" }}>
+                          {name}
+                        </span>
+
+                        {/* InfoButton */}
+                        {metricsInfo[name] && (
+                          <InfoButtonModern
+                            title={metricsInfo[name].title}
+                            content={metricsInfo[name].content}
+                          />
+                        )}
+
+                      </div>
+                    </td>
                     <td>{metricValue}</td>
                     <td>{interpretation}</td>
                   </tr>
@@ -178,8 +238,13 @@ export default function EvaluationPanel() {
 
         <div className="violations-section">
 
-          <h3>
+          <h3 style={{ display: "flex", alignItems: "center", gap: 8 }}>
             Violaciones de Reglas ({violations.violations_count})
+
+            <InfoButtonModern
+              title="Violaciones de reglas OCL"
+              content="Indican incumplimientos de restricciones definidas sobre el modelo. Cada violación señala una inconsistencia que debe corregirse."
+            />
           </h3>
 
           {violations.violations_count === 0 && (

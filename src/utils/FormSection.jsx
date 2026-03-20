@@ -1,19 +1,22 @@
 import React from "react";
+import InfoButtonModern from "./InfoButtonModern";
 
 export default function FormSection({
     title,
+    infoButton,
     items,
     setItems,
     fields,
     fieldErrors,
     setFieldErrors,
-    layout = "column", // "column" o "row"
-    addButtonText, // Texto personalizado para el botón "Añadir"
-    sectionColor = "#3a6ea5", // color del borde lateral
+    layout = "column",
+    addButtonText,
+    sectionColor = "#3a6ea5",
     showAddButton = true,
     showRemoveButton = true,
     helpText
 }) {
+
     const handleChange = (index, fieldName, value) => {
         const updated = [...items];
         updated[index] = { ...updated[index], [fieldName]: value };
@@ -43,14 +46,29 @@ export default function FormSection({
 
     return (
         <div style={{ marginBottom: "20px" }}>
-            <h3 style={{ color: "#34495e" }}>{title}</h3>
 
+            {/* HEADER */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <h3 style={{ color: "#34495e", margin: 0 }}>
+                    {title}
+                </h3>
+
+                {infoButton && (
+                    <InfoButtonModern
+                        title={title}
+                        content={infoButton}
+                    />
+                )}
+            </div>
+
+            {/* HELP TEXT */}
             {helpText && (
                 <p className="section-help">
                     {helpText}
                 </p>
             )}
 
+            {/* ITEMS */}
             {(items || []).map((item, i) => (
                 <div
                     key={i}
@@ -85,6 +103,8 @@ export default function FormSection({
                                             : "1px solid #d6d6d6",
                                     }}
                                 >
+                                    <option value="">Selecciona una opción</option> {/* 👈 CLAVE */}
+
                                     {f.options.map((opt) => (
                                         <option key={opt.value} value={opt.value}>
                                             {opt.label}
@@ -131,6 +151,7 @@ export default function FormSection({
                 </div>
             ))}
 
+            {/* ADD BUTTON */}
             {showAddButton && (
                 <button
                     type="button"
