@@ -48,11 +48,12 @@ export default function EvaluationResults({ result }) {
       ))}
 
       <h4>IGC</h4>
-
-      <div className="igc-box">
-        {result.IGC}
-      </div>
-
+      {result.IGC !== undefined && (
+         <div className="igc-box">
+          <p><b>Valor IGC:</b> {result.IGC}</p>
+           <p><b>Interpretación:</b> {result.interpretado_IGC}</p>
+  </div>
+)}
     </div>
   )
 }

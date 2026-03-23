@@ -16,6 +16,7 @@ export default function EvaluationPanel() {
   const [metrics, setMetrics] = useState(null)
   const [violations, setViolations] = useState(null)
   const [igc, setIGC] = useState(null)
+  const [igcDescription, setIGCDescription] = useState(null)
   const [error, setError] = useState(null)
   const metricsInfo = {
     ICS: {
@@ -106,7 +107,7 @@ export default function EvaluationPanel() {
       })
 
       setIGC(result.IGC ?? null)
-
+      setIGCDescription(result.interpretado_IGC ?? "")
       setError(null)
 
     } catch (err) {
@@ -160,6 +161,10 @@ export default function EvaluationPanel() {
 
           <p className="igc-score">
             {igc}
+          </p>
+
+          <p className="igc-description">
+              {igcDescription}
           </p>
 
         </div>
