@@ -11,6 +11,11 @@ export default function PracticesSection() {
     setModel({ ...model, practices: updated });
   };
 
+  const removePractice = (index) => {
+    const updated = practices.filter((_, i) => i !== index);
+    handlePracticesChange(updated);
+  };
+
   const practiceFields = [
     { name: "id", label: "ID", placeholder: "Practice ID", type: "text" },
     { name: "name", label: "Nombre", placeholder: "Nombre", type: "text" },
@@ -21,11 +26,11 @@ export default function PracticesSection() {
       options: [
         { label: "Agile", value: "agile" },
         { label: "Traditional", value: "traditional" },
+        { label: "Hybrid", value: "hybrid" },
       ],
     },
   ];
 
-  // Sub-secciones: Actividades, Roles, Reglas, Artefactos
   const subFields = {
     activities: [
       { name: "id", label: "ID", placeholder: "Activity ID", type: "text" },
@@ -37,6 +42,7 @@ export default function PracticesSection() {
         options: [
           { label: "Agile", value: "agile" },
           { label: "Traditional", value: "traditional" },
+          { label: "Hybrid", value: "hybrid" },
         ],
       },
     ],
@@ -53,9 +59,9 @@ export default function PracticesSection() {
   };
 
   return (
-
     <div className="section-card">
       <h3>Prácticas</h3>
+
       {practices.map((p, i) => (
         <div
           key={i}
@@ -72,15 +78,38 @@ export default function PracticesSection() {
             items={[p]}
             setItems={(items) => {
               const updated = [...practices];
-              updated[i] = items[0];
+              updated[i] = items[0] || {
+                id: "",
+                name: "",
+                type: "agile",
+                activities: [],
+                roles: [],
+                rules: [],
+                artifacts: [],
+              };
               handlePracticesChange(updated);
             }}
             fields={practiceFields}
             fieldErrors={fieldErrors}
             setFieldErrors={setFieldErrors}
             layout="row"
-            showAddButton={false} // no mostrar el botón aquí
+            showAddButton={false}
+            showRemoveButton={false} // 👈 IMPORTANTE
           />
+
+          {/* Botón eliminar práctica */}
+          <button
+            onClick={() => removePractice(i)}
+            style={{
+              backgroundColor: "#e74c3c",
+              color: "white",
+              padding: "8px 14px",
+              borderRadius: "6px",
+              marginBottom: "10px",
+            }}
+          >
+            Eliminar Práctica
+          </button>
 
           {/* Sub-secciones */}
           <FormSection
@@ -145,7 +174,6 @@ export default function PracticesSection() {
         </div>
       ))}
 
-      {/* Botón general para añadir práctica al final */}
       <button
         onClick={() => {
           const newPractice = {

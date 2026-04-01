@@ -4,11 +4,11 @@ import InfoButtonModern from "./InfoButtonModern";
 export default function FormSection({
     title,
     infoButton,
-    items,
+    items = [],
     setItems,
-    fields,
-    fieldErrors,
-    setFieldErrors,
+    fields = [],
+    fieldErrors = {},
+    setFieldErrors = () => {},
     layout = "column",
     addButtonText,
     sectionColor = "#3a6ea5",
@@ -23,10 +23,13 @@ export default function FormSection({
         setItems(updated);
 
         const key = `${index}_${fieldName}`;
-        if (fieldErrors[key] && value.trim() !== "") {
-            const newErrors = { ...fieldErrors };
-            delete newErrors[key];
-            setFieldErrors(newErrors);
+
+        if (fieldErrors?.[key] && value?.trim() !== "") {
+            setFieldErrors(prev => {
+                const newErrors = { ...(prev || {}) };
+                delete newErrors[key];
+                return newErrors;
+            });
         }
     };
 
@@ -34,15 +37,19 @@ export default function FormSection({
         const updated = items.filter((_, i) => i !== index);
         setItems(updated);
 
-        const newErrors = { ...fieldErrors };
+        const newErrors = { ...(fieldErrors || {}) };
+
         Object.keys(newErrors).forEach((key) => {
-            if (key.startsWith(`${index}_`)) delete newErrors[key];
+            if (key.startsWith(`${index}_`)) {
+                delete newErrors[key];
+            }
         });
+
         setFieldErrors(newErrors);
     };
 
     const isInvalid = (index, fieldName) =>
-        fieldErrors && fieldErrors[`${index}_${fieldName}`];
+        Boolean(fieldErrors?.[`${index}_${fieldName}`]);
 
     return (
         <div style={{ marginBottom: "20px" }}>
@@ -88,6 +95,7 @@ export default function FormSection({
                             className="form-field"
                             style={{
                                 flex: f.flex || "1 1 200px",
+                                display: "flex",
                                 flexDirection: "column",
                             }}
                         >
@@ -95,17 +103,21 @@ export default function FormSection({
 
                             {f.type === "select" ? (
                                 <select
-                                    value={item[f.name] || ""}
-                                    onChange={(e) => handleChange(i, f.name, e.target.value)}
+                                    value={item?.[f.name] || ""}
+                                    onChange={(e) =>
+                                        handleChange(i, f.name, e.target.value)
+                                    }
                                     style={{
                                         border: isInvalid(i, f.name)
                                             ? "2px solid #e74c3c"
                                             : "1px solid #d6d6d6",
                                     }}
                                 >
-                                    <option value="">Selecciona una opción</option> {/* 👈 CLAVE */}
+                                    <option value="">
+                                        Selecciona una opción
+                                    </option>
 
-                                    {f.options.map((opt) => (
+                                    {f.options?.map((opt) => (
                                         <option key={opt.value} value={opt.value}>
                                             {opt.label}
                                         </option>
@@ -113,9 +125,11 @@ export default function FormSection({
                                 </select>
                             ) : (
                                 <input
-                                    value={item[f.name] || ""}
+                                    value={item?.[f.name] || ""}
                                     placeholder={f.placeholder || f.label}
-                                    onChange={(e) => handleChange(i, f.name, e.target.value)}
+                                    onChange={(e) =>
+                                        handleChange(i, f.name, e.target.value)
+                                    }
                                     style={{
                                         border: isInvalid(i, f.name)
                                             ? "2px solid #e74c3c"
@@ -142,7 +156,8 @@ export default function FormSection({
                                 padding: "8px 14px",
                                 borderRadius: "6px",
                                 height: "40px",
-                                alignSelf: layout === "row" ? "center" : "flex-start",
+                                alignSelf:
+                                    layout === "row" ? "center" : "flex-start",
                             }}
                         >
                             Eliminar
@@ -158,7 +173,10 @@ export default function FormSection({
                     onClick={() =>
                         setItems([
                             ...(items || []),
-                            fields.reduce((acc, f) => ({ ...acc, [f.name]: "" }), {}),
+                            fields.reduce(
+                                (acc, f) => ({ ...acc, [f.name]: "" }),
+                                {}
+                            ),
                         ])
                     }
                     style={{

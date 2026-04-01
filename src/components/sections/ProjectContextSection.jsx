@@ -1,63 +1,63 @@
 import { useModelContext } from "../../context/ModelContext";
-import FormSection from "../../utils/FormSection";
 
-function ProjectContextSection({ fieldErrors, setFieldErrors }) {
+function ProjectContextSection() {
+
   const { model, setModel } = useModelContext();
 
-  const context = model.projectContext || {
-    projectSize: "",
-    criticality: "",
-    regulatoryConstraints: false,
-    distributedTeam: false,
+  const contexts = model.projectContext || [];
+
+  const addContext = () => {
+
+    setModel({
+      ...model,
+      projectContext: [...contexts, ""]
+    });
   };
 
-  const setItems = (updatedItems) => {
-    if (updatedItems?.length > 0) {
-      setModel({
-        ...model,
-        projectContext: updatedItems[0],
-      });
-    }
+  const updateContext = (index, value) => {
+
+    const updated = [...contexts];
+    updated[index] = value;
+
+    setModel({
+      ...model,
+      projectContext: updated
+    });
   };
 
-  const fields = [
-    {
-      name: "projectSize",
-      label: "Tamaño del Proyecto",
-      placeholder: "Tamaño del Proyecto",
-      type: "text",
-      flex: "1 1 45%",
-    },
-    {
-      name: "criticality",
-      label: "Criticidad",
-      placeholder: "Criticidad",
-      type: "text",
-      flex: "1 1 45%",
-    },
-  ];
+  const removeContext = (index) => {
+
+    const updated = contexts.filter((_, i) => i !== index);
+
+    setModel({
+      ...model,
+      projectContext: updated
+    });
+  };
 
   return (
     <div>
+      <h3>Contexto del Proyecto</h3>
 
-      {(fieldErrors["0_projectSize"] || fieldErrors["0_criticality"]) && (
-        <p className="error">
-          Debes completar los datos del contexto del proyecto
-        </p>
-      )}
+      {contexts.map((c, i) => (
+        <div key={i}>
 
-      <FormSection
-        title="Contexto del Proyecto"
-        helpText="Define las características del entorno del proyecto."
-        items={[context]}
-        setItems={setItems}
-        fields={fields}
-        fieldErrors={fieldErrors}
-        setFieldErrors={setFieldErrors}
-        layout="row"
-        showAddButton={false}
-        showRemoveButton={false}
-      />
+          <input
+            value={c || ""}
+            onChange={e => updateContext(i, e.target.value)}
+            placeholder="Describe el contexto del proyecto"
+          />
+
+          <button onClick={() => removeContext(i)}>
+            Eliminar
+          </button>
+
+        </div>
+      ))}
+
+      <button onClick={addContext}>
+        Añadir Contexto
+      </button>
 
     </div>
   );

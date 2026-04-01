@@ -51,7 +51,7 @@ return (
     )}
 
     <FormSection
-      title="Relaciones de Compatibilidad"
+      title="Relaciones de compatibilidad secuencial"
       helpText="Selecciona prácticas existentes para definir relaciones secuenciales."
       infoButton="Define una relación secuencial entre prácticas. La Práctica B se ejecuta después de la Práctica A, estableciendo un orden dentro del proceso."
       items={relations}

@@ -63,17 +63,15 @@ export default function ModelEditor() {
 
         break;
       case 4:
-        const context = model.projectContext || {};
+        const contexts = model.projectContext || [];
 
-        if (!context.projectSize) {
-          errors["0_projectSize"] = true;
-        }
+          const hasValid = contexts.some(c => c && c.trim() !== "");
 
-        if (!context.criticality) {
-          errors["0_criticality"] = true;
-        }
+          if (!hasValid) {
+            errors.context = true;
+          }
 
-        break;
+      break;
       default:
         break;
     }
