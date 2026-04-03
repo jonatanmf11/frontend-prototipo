@@ -50,7 +50,9 @@ export default function PracticesSection() {
       { name: "id", label: "ID", placeholder: "Role ID", type: "text" },
       { name: "name", label: "Nombre", placeholder: "Nombre", type: "text" },
     ],
-    rules: [{ name: "rule", label: "Regla", placeholder: "Regla", type: "text" }],
+    rules: [
+      { name: "rule", label: "Regla", placeholder: "Regla", type: "text" }
+    ],
     artifacts: [
       { name: "id", label: "ID", placeholder: "Artifact ID", type: "text" },
       { name: "name", label: "Nombre", placeholder: "Nombre", type: "text" },
@@ -62,118 +64,126 @@ export default function PracticesSection() {
     <div className="section-card">
       <h3>Prácticas</h3>
 
-      {practices.map((p, i) => (
-        <div
-          key={i}
-          style={{
-            border: "1px solid #ccc",
-            padding: "12px",
-            marginBottom: "12px",
-            borderRadius: "6px",
-          }}
-        >
-          {/* Práctica principal */}
-          <FormSection
-            title={`Práctica #${i + 1}`}
-            items={[p]}
-            setItems={(items) => {
-              const updated = [...practices];
-              updated[i] = items[0] || {
-                id: "",
-                name: "",
-                type: "agile",
-                activities: [],
-                roles: [],
-                rules: [],
-                artifacts: [],
-              };
-              handlePracticesChange(updated);
-            }}
-            fields={practiceFields}
-            fieldErrors={fieldErrors}
-            setFieldErrors={setFieldErrors}
-            layout="row"
-            showAddButton={false}
-            showRemoveButton={false} // 👈 IMPORTANTE
-          />
-
-          {/* Botón eliminar práctica */}
-          <button
-            onClick={() => removePractice(i)}
+      {practices.map((p, i) => {
+        return (
+          <div
+            key={i}
             style={{
-              backgroundColor: "#e74c3c",
-              color: "white",
-              padding: "8px 14px",
+              border: "1px solid #ccc",
+              padding: "12px",
+              marginBottom: "12px",
               borderRadius: "6px",
-              marginBottom: "10px",
             }}
           >
-            Eliminar Práctica
-          </button>
+            {/* Práctica principal */}
+            <FormSection
+              title={`Práctica #${i + 1}`}
+              items={[p]}
+              setItems={(items) => {
+                const updated = [...practices];
+                updated[i] = items[0] || {
+                  id: "",
+                  name: "",
+                  type: "agile",
+                  activities: [],
+                  roles: [],
+                  rules: [],
+                  artifacts: [],
+                };
+                handlePracticesChange(updated);
+              }}
+              fields={practiceFields}
+              fieldErrors={fieldErrors}
+              setFieldErrors={setFieldErrors}
+              layout="row"
+              showAddButton={false}
+              showRemoveButton={false}
+            />
 
-          {/* Sub-secciones */}
-          <FormSection
-            title="Actividades"
-            items={p.activities || []}
-            setItems={(items) => {
-              const updated = [...practices];
-              updated[i].activities = items;
-              handlePracticesChange(updated);
-            }}
-            fields={subFields.activities}
-            fieldErrors={fieldErrors}
-            setFieldErrors={setFieldErrors}
-            layout="row"
-            addButtonText="Añadir Actividad"
-          />
+            {/* Botón eliminar práctica */}
+            <button
+              onClick={() => removePractice(i)}
+              style={{
+                backgroundColor: "#e74c3c",
+                color: "white",
+                padding: "8px 14px",
+                borderRadius: "6px",
+                marginBottom: "10px",
+              }}
+            >
+              Eliminar Práctica
+            </button>
 
-          <FormSection
-            title="Roles"
-            items={p.roles || []}
-            setItems={(items) => {
-              const updated = [...practices];
-              updated[i].roles = items;
-              handlePracticesChange(updated);
-            }}
-            fields={subFields.roles}
-            fieldErrors={fieldErrors}
-            setFieldErrors={setFieldErrors}
-            layout="row"
-            addButtonText="Añadir Rol"
-          />
+            {/* Actividades */}
+            <FormSection
+              title="Actividades"
+              items={p.activities || []}
+              setItems={(items) => {
+                const updated = [...practices];
+                updated[i].activities = items;
+                handlePracticesChange(updated);
+              }}
+              fields={subFields.activities}
+              fieldErrors={fieldErrors}
+              setFieldErrors={setFieldErrors}
+              layout="row"
+              addButtonText="Añadir Actividad"
+            />
 
-          <FormSection
-            title="Reglas"
-            items={p.rules || []}
-            setItems={(items) => {
-              const updated = [...practices];
-              updated[i].rules = items;
-              handlePracticesChange(updated);
-            }}
-            fields={subFields.rules}
-            fieldErrors={fieldErrors}
-            setFieldErrors={setFieldErrors}
-            layout="row"
-            addButtonText="Añadir Regla"
-          />
+            {/* Roles */}
+            <FormSection
+              title="Roles"
+              items={p.roles || []}
+              setItems={(items) => {
+                const updated = [...practices];
+                updated[i].roles = items;
+                handlePracticesChange(updated);
+              }}
+              fields={subFields.roles}
+              fieldErrors={fieldErrors}
+              setFieldErrors={setFieldErrors}
+              layout="row"
+              addButtonText="Añadir Rol"
+            />
 
-          <FormSection
-            title="Artefactos"
-            items={p.artifacts || []}
-            setItems={(items) => {
-              const updated = [...practices];
-              updated[i].artifacts = items;
-              handlePracticesChange(updated);
-            }}
-            fields={subFields.artifacts}
-            fieldErrors={fieldErrors}
-            setFieldErrors={setFieldErrors}
-            layout="row"
-            addButtonText="Añadir Artefacto"
-          />
-        </div>
-      ))}
+            {/* Reglas */}
+            <FormSection
+              title="Reglas"
+              items={(p.rules || []).map(r =>
+                typeof r === "string" ? { rule: r } : r
+              )}
+              setItems={(items) => {
+                const updated = [...practices];
+                updated[i].rules = items;
+                handlePracticesChange(updated);
+              }}
+              fields={subFields.rules}
+              fieldErrors={fieldErrors}
+              setFieldErrors={setFieldErrors}
+              layout="row"
+              addButtonText="Añadir Regla"
+            />
 
+            {/* Artefactos */}
+            <FormSection
+              title="Artefactos"
+              items={p.artifacts || []}
+              setItems={(items) => {
+                const updated = [...practices];
+                updated[i].artifacts = items;
+                handlePracticesChange(updated);
+              }}
+              fields={subFields.artifacts}
+              fieldErrors={fieldErrors}
+              setFieldErrors={setFieldErrors}
+              layout="row"
+              addButtonText="Añadir Artefacto"
+            />
+          </div>
+        );
+      })}
+
+      {/* Añadir práctica */}
       <button
         onClick={() => {
           const newPractice = {
