@@ -79,6 +79,48 @@ body {
   border-left: 6px solid #e74c3c;
 }
 
+
+/* CONTENEDOR GENERAL PROJECT CONTEXT */
+.context-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* LISTA */
+.context-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CADA FILA */
+.context-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* INPUT */
+.context-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.context-input:focus {
+  outline: none;
+  border: 1px solid #3a6ea5;
+  box-shadow: 0 0 0 2px rgba(58, 110, 165, 0.15);
+}
+
+
+.btn-add-context {
+  align-self: flex-start;
+}
 /* ---------- resultados ---------- */
 
 .results-container {
@@ -314,4 +356,77 @@ textarea:focus {
   background-color: #e74c3c; /* mismo color */
   color: white;
   cursor: pointer;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 30px;
+  position: relative;
+}
+
+.stepper-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  cursor: pointer;
+}
+
+.step-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #ddd;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+/* Paso activo */
+.step-circle.active {
+  background: #007bff;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Paso completado */
+.step-circle.completed {
+  background: #28a745;
+  color: white;
+}
+
+/* Línea entre pasos */
+.step-line {
+  position: absolute;
+  top: 17px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background: #ddd;
+  z-index: 1;
+}
+
+.step-line.completed {
+  background: #28a745;
+}
+
+/* Texto */
+.step-label {
+  margin-top: 8px;
+  font-size: 12px;
+  text-align: center;
+  color: #666;
+  max-width: 80px;
+}
+
+.step-circle.active + .step-label {
+  color: #007bff;
+  font-weight: 600;
 }

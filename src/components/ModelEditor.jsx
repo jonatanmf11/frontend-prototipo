@@ -23,9 +23,18 @@ export default function ModelEditor() {
   const [fieldErrors, setFieldErrors] = useState({});
   const totalSteps = 6;
 
+  const stepLabels = [
+    "General",
+    "Prácticas",
+    "Relaciones",
+    "Contexto",
+    "Métricas",
+    "Evaluación"
+  ];
+
   if (loading) return <p>Cargando modelo...</p>;
 
-  // Validación por paso
+  // ---------------- VALIDACIÓN ----------------
   const validateStep = () => {
     const errors = {};
 
@@ -34,10 +43,13 @@ export default function ModelEditor() {
         if (!model.id) errors["0_id"] = true;
         if (!model.name) errors["0_name"] = true;
         break;
+
       case 2:
-        if (!model.practices || model.practices.length === 0)
+        if (!model.practices || model.practices.length === 0) {
           errors.practices = true;
+        }
         break;
+
       case 3:
         const relations = model.compatibilityRelations || [];
 
@@ -46,32 +58,22 @@ export default function ModelEditor() {
         }
 
         relations.forEach((rel, index) => {
-
-          if (!rel.practiceA) {
-            errors[`${index}_practiceA`] = true;
-          }
-
-          if (!rel.practiceB) {
-            errors[`${index}_practiceB`] = true;
-          }
-
-          if (!rel.type) {
-            errors[`${index}_type`] = true;
-          }
-
+          if (!rel.practiceA) errors[`${index}_practiceA`] = true;
+          if (!rel.practiceB) errors[`${index}_practiceB`] = true;
+          if (!rel.type) errors[`${index}_type`] = true;
         });
-
         break;
+
       case 4:
         const contexts = model.projectContext || [];
 
-          const hasValid = contexts.some(c => c && c.trim() !== "");
+        const hasValid = contexts.some(c => c && c.trim() !== "");
 
-          if (!hasValid) {
-            errors.context = true;
-          }
+        if (!hasValid) {
+          errors.context = true;
+        }
+        break;
 
-      break;
       default:
         break;
     }
@@ -80,14 +82,15 @@ export default function ModelEditor() {
     return Object.keys(errors).length === 0;
   };
 
-  // Cuando el usuario escribe, eliminar el error del campo correspondiente
-  const handleFieldChange = (field, value) => {
-    setModel({ ...model, [field]: value });
+  // ---------------- NAVEGACIÓN ----------------
+  const goToStep = (targetStep) => {
+    if (targetStep < step) {
+      setStep(targetStep);
+      return;
+    }
 
-    if (fieldErrors[field]) {
-      const newErrors = { ...fieldErrors };
-      delete newErrors[field];
-      setFieldErrors(newErrors);
+    if (validateStep()) {
+      setStep(targetStep);
     }
   };
 
@@ -100,6 +103,18 @@ export default function ModelEditor() {
     if (step > 1) setStep(step - 1);
   };
 
+  // ---------------- HANDLERS ----------------
+  const handleFieldChange = (field, value) => {
+    setModel({ ...model, [field]: value });
+
+    if (fieldErrors[field]) {
+      const newErrors = { ...fieldErrors };
+      delete newErrors[field];
+      setFieldErrors(newErrors);
+    }
+  };
+
+  // ---------------- RENDER PASOS ----------------
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -114,24 +129,46 @@ export default function ModelEditor() {
             />
           </div>
         );
+
       case 2:
-        return <div className="section-card"><PracticesSection step={step}
-          fieldErrors={fieldErrors}
-          model={model}
-          setModel={setModel}
-          handleFieldChange={handleFieldChange} /></div>;
+        return (
+          <div className="section-card">
+            <PracticesSection
+              step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange}
+            />
+          </div>
+        );
+
       case 3:
-        return <div className="section-card"><RelationsSection step={step}
-          fieldErrors={fieldErrors}
-          model={model}
-          setModel={setModel}
-          handleFieldChange={handleFieldChange} /></div>;
+        return (
+          <div className="section-card">
+            <RelationsSection
+              step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange}
+            />
+          </div>
+        );
+
       case 4:
-        return <div className="section-card"><ContextSection step={step}
-          fieldErrors={fieldErrors}
-          model={model}
-          setModel={setModel}
-          handleFieldChange={handleFieldChange} /></div>;
+        return (
+          <div className="section-card">
+            <ContextSection
+              step={step}
+              fieldErrors={fieldErrors}
+              model={model}
+              setModel={setModel}
+              handleFieldChange={handleFieldChange}
+            />
+          </div>
+        );
+
       case 5:
         return (
           <>
@@ -141,28 +178,63 @@ export default function ModelEditor() {
             <div className="section-card"><MismatchEditor /></div>
           </>
         );
+
       case 6:
         return (
           <div className="editor-container">
             <EvaluationPanel />
           </div>
         );
+
       default:
         return null;
     }
   };
 
+  // ---------------- UI ----------------
   return (
     <div className="editor-container">
       <h1 className="editor-title">Herramienta de Evaluación - CHAPLIN</h1>
       <p className="editor-text">Paso {step} de {totalSteps}</p>
 
-      <div className="progress-bar">
-        <div className="progress" style={{ width: `${(step / totalSteps) * 100}%` }} />
+      {/* 🔹 Barra de pasos clickeable */}
+      <div className="stepper">
+        {stepLabels.map((label, index) => {
+          const stepNumber = index + 1;
+          const isActive = step === stepNumber;
+          const isCompleted = step > stepNumber;
+
+          return (
+            <div
+              key={stepNumber}
+              className="stepper-item"
+              onClick={() => goToStep(stepNumber)}
+            >
+              <div
+                className={`step-circle 
+            ${isActive ? "active" : ""} 
+            ${isCompleted ? "completed" : ""}
+          `}
+              >
+                {isCompleted ? "✓" : stepNumber}
+              </div>
+
+              <span className="step-label">{label}</span>
+
+              {stepNumber !== totalSteps && (
+                <div
+                  className={`step-line ${step > stepNumber ? "completed" : ""
+                    }`}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {renderStep()}
 
+      {/* 🔹 Botones */}
       <div className="navigation-buttons">
         {step > 1 && (
           <button className="button-secondary" onClick={handleBack}>
