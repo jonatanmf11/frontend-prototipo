@@ -32,73 +32,60 @@ export default function CAFEditor() {
     setCafDocumentation(updated)
 
   }
+const renderSection = (title, section, fields) => {
 
-  const renderSection = (title, section, fields) => {
+  const items = cafDocumentation[section]
 
-    return (
+  return (
+    <div style={{ marginTop: 20 }}>
 
-      <div style={{ marginTop: 20 }}>
+      <h4>{title}</h4>
 
-        <h4>{title}</h4>
+      {!items || items.length === 0 ? (
+
+        <p style={{ color: "#888", fontStyle: "italic" }}>
+          No hay información disponible por ahora.
+        </p>
+
+      ) : (
 
         <table border="1" cellPadding="5">
-
           <thead>
             <tr>
-
               {fields.map(f => (
                 <th key={f}>{f}</th>
               ))}
-
               <th>Documented</th>
-
             </tr>
           </thead>
-
           <tbody>
-
-            {cafDocumentation[section].map((item, i) => (
-
+            {items.map((item, i) => (
               <tr key={i}>
-
                 {fields.map(f => (
-
                   <td key={f}>
-
                     <input
                       value={item[f] || ""}
-                      onChange={(e) =>
-                        updateItem(section, i, f, e.target.value)
-                      }
+                      onChange={(e) => updateItem(section, i, f, e.target.value)}
                     />
-
                   </td>
-
                 ))}
-
                 <td>
-
                   <input
                     type="checkbox"
                     checked={item.documented}
                     onChange={() => toggleDocumented(section, i)}
                   />
-
                 </td>
-
               </tr>
-
             ))}
-
           </tbody>
-
         </table>
 
-      </div>
+      )}
 
-    )
-
-  }
+    </div>
+  )
+}
 
   return (
 
@@ -117,11 +104,9 @@ export default function CAFEditor() {
         0 indica ausencia de documentación y 1 indica cobertura completa.
       </p>
 
-      {renderSection(
-        "Actividades",
-        "activities",
-        ["id"]
-      )}
+      {renderSection("Actividades", "activities", ["id", "name"])}
+
+
 
       {renderSection(
         "Reglas",
@@ -129,17 +114,9 @@ export default function CAFEditor() {
         ["practiceId"]
       )}
 
-      {renderSection(
-        "Roles",
-        "roles",
-        ["id"]
-      )}
+      {renderSection("Roles", "roles", ["id", "name"])}
 
-      {renderSection(
-        "Artefactos",
-        "artifacts",
-        ["id"]
-      )}
+      {renderSection("Artefactos", "artifacts", ["id", "name"])}
 
       {renderSection(
         "Secuencia",
