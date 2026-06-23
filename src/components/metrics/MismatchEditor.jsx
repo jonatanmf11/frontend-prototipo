@@ -10,17 +10,68 @@ export default function MismatchEditor() {
     return <p>Cargando características del proyecto...</p>
   }
 
-  const updateField = (index, field, value) => {
-    const updated = { ...mismatchData }
-    updated.characteristics[index][field] = Number(value)
-    setMismatchData(updated)
-  }
+const updateField = (index, field, value) => {
+  const updated = { ...mismatchData }
 
-  const updateMethodology = (index, method, value) => {
-    const updated = { ...mismatchData }
-    updated.characteristics[index].methodologies[method] = Number(value)
-    setMismatchData(updated)
+  updated.characteristics[index][field] =
+    value === "" ? "" : Number(value)
+
+  setMismatchData(updated)
+}
+const sanitizePositiveNumber = (value) => {
+  if (value === "") return "";
+
+  const num = Number(value);
+
+  if (isNaN(num))
+    return "";
+
+  return Math.max(0, num);
+};
+
+const updateMethodology = (index, method, value) => {
+  try {
+    const updated = { ...mismatchData };
+
+    updated.characteristics[index].methodologies[method] =
+      sanitizePositiveNumber(value);
+
+    setMismatchData(updated);
+
+  } catch (error) {
+    console.error(error);
   }
+};
+const addCharacteristic = () => {
+  const updated = {
+    ...mismatchData,
+    characteristics: [
+      ...mismatchData.characteristics,
+      {
+        name: "",
+        projectValue: "",
+        weight: "",
+        methodologies: {
+          agile: "",
+          traditional: "",
+          hybrid: ""
+        }
+      }
+    ]
+  };
+
+  setMismatchData(updated);
+};
+const removeCharacteristic = (index) => {
+  const updated = {
+    ...mismatchData,
+    characteristics: mismatchData.characteristics.filter(
+      (_, i) => i !== index
+    )
+  };
+
+  setMismatchData(updated);
+};
 
   return (
 
@@ -53,6 +104,7 @@ export default function MismatchEditor() {
               <th>Ágil</th>
               <th>Tradicional</th>
               <th>Híbrido</th>
+              <th>Acciones</th>
             </tr>
           </thead>
 
@@ -62,13 +114,22 @@ export default function MismatchEditor() {
 
               <tr key={i}>
 
-                <td className="characteristic-name">
-                  {c.name}
-                </td>
+              <td>
+                <input
+                  type="text"
+                  value={c.name}
+                  onChange={(e) => {
+                    const updated = { ...mismatchData };
+                    updated.characteristics[i].name = e.target.value;
+                    setMismatchData(updated);
+                  }}
+                />
+              </td>
 
-                <td>
+                                  <td>
                   <input
                     type="number"
+                    min="0"
                     value={c.projectValue}
                     onChange={(e) => updateField(i, "projectValue", e.target.value)}
                   />
@@ -78,6 +139,7 @@ export default function MismatchEditor() {
                   <input
                     type="number"
                     value={c.weight}
+                    min="0"
                     onChange={(e) => updateField(i, "weight", e.target.value)}
                   />
                 </td>
@@ -86,6 +148,7 @@ export default function MismatchEditor() {
                   <input
                     type="number"
                     value={c.methodologies.agile}
+                    min="0"
                     onChange={(e) => updateMethodology(i, "agile", e.target.value)}
                   />
                 </td>
@@ -94,6 +157,7 @@ export default function MismatchEditor() {
                   <input
                     type="number"
                     value={c.methodologies.traditional}
+                    min="0"
                     onChange={(e) => updateMethodology(i, "traditional", e.target.value)}
                   />
                 </td>
@@ -102,10 +166,26 @@ export default function MismatchEditor() {
                   <input
                     type="number"
                     value={c.methodologies.hybrid}
+                    min="0"
                     onChange={(e) => updateMethodology(i, "hybrid", e.target.value)}
                   />
                 </td>
 
+<td>
+  <button
+    onClick={() => removeCharacteristic(i)}
+    style={{
+      backgroundColor: "#e74c3c",
+      color: "white",
+      border: "none",
+      borderRadius: "5px",
+      padding: "6px 10px",
+      cursor: "pointer"
+    }}
+  >
+    🗑
+  </button>
+</td>
               </tr>
 
             ))}
@@ -113,6 +193,20 @@ export default function MismatchEditor() {
           </tbody>
 
         </table>
+
+        <div style={{ marginTop: "20px" }}>
+  <button
+    onClick={addCharacteristic}
+    style={{
+      border: "none",
+      padding: "10px 18px",
+      borderRadius: "6px",
+      cursor: "pointer"
+    }}
+  >
+    Añadir característica
+  </button>
+</div>
 
       </div>
 
