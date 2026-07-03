@@ -10,7 +10,6 @@ import {
 
 const ModelContext = createContext()
 
-// Claves para localStorage
 const STORAGE_KEYS = {
   model: "chaplin_model",
   icfPairs: "chaplin_icfPairs",
@@ -19,7 +18,6 @@ const STORAGE_KEYS = {
   mismatchData: "chaplin_mismatchData",
 }
 
-//   Helpers para leer/guardar con seguridad
 const loadFromStorage = (key) => {
   try {
     const stored = localStorage.getItem(key)
@@ -37,8 +35,6 @@ const saveToStorage = (key, value) => {
   }
 }
 
-/* ---------------- INITIAL MODEL ---------------- */
-
 const initialModel = {
   id: "",
   name: "",
@@ -54,8 +50,6 @@ const initialModel = {
   }
 }
 
-/* ---------------- CONTEXT PROVIDER ---------------- */
-
 export function ModelProvider({ children }) {
 
   const [model, setModelState] = useState(initialModel)
@@ -65,10 +59,42 @@ export function ModelProvider({ children }) {
   const [mismatchData, setMismatchDataState] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  //   Wrappers que guardan en localStorage al actualizar
+  // ── setModel: guarda el modelo Y sincroniza secuencias del CAF ──
   const setModel = (value) => {
     setModelState(value)
     saveToStorage(STORAGE_KEYS.model, value)
+
+    // Patrón funcional: lee el CAF más reciente sin depender de closures
+    setCafDocumentationState(prev => {
+      if (!prev) return prev
+
+      const relacionesNuevas = value.compatibilityRelations || []
+
+      const nuevasSecuencias = relacionesNuevas.map(rel => {
+        const existente = (prev.sequence || []).find(
+          s => s.practiceA === rel.practiceA && s.practiceB === rel.practiceB
+        )
+        return {
+          practiceA: rel.practiceA,
+          practiceB: rel.practiceB,
+          documented: existente ? existente.documented : false
+        }
+      })
+
+      const cafActualizado = { ...prev, sequence: nuevasSecuencias }
+
+      // Persistir en localStorage también
+      saveToStorage(STORAGE_KEYS.cafDocumentation, cafActualizado)
+
+      console.log(
+        "[CHAPLIN] Secuencias CAF sincronizadas:",
+        nuevasSecuencias.length,
+        "→",
+        nuevasSecuencias
+      )
+
+      return cafActualizado
+    })
   }
 
   const setIcfPairs = (value) => {
@@ -91,20 +117,67 @@ export function ModelProvider({ children }) {
     saveToStorage(STORAGE_KEYS.mismatchData, value)
   }
 
-  /* ---------------- LOAD DATA ---------------- */
-
   useEffect(() => {
-
     async function loadInitialData() {
       try {
 
-        //   Para cada dato: primero localStorage, si no hay → servicio
+        // Cargar CAF primero para que setModel pueda sincronizar
+        let cafInicial = null
+        const storedCaf = loadFromStorage(STORAGE_KEYS.cafDocumentation)
+        if (storedCaf) {
+          cafInicial = storedCaf
+          setCafDocumentationState(storedCaf)
+        } else {
+          const caf = await fetchCAFDocumentation()
+          if (caf) {
+            cafInicial = caf
+            setCafDocumentationState(caf)
+            saveToStorage(STORAGE_KEYS.cafDocumentation, caf)
+          }
+        }
+
+        // Cargar modelo y sincronizar secuencias con el CAF ya cargado
         const storedModel = loadFromStorage(STORAGE_KEYS.model)
         if (storedModel) {
           setModelState(storedModel)
+          saveToStorage(STORAGE_KEYS.model, storedModel)
+
+          // Sincronizar manualmente en el arranque
+          if (cafInicial) {
+            const relaciones = storedModel.compatibilityRelations || []
+            const nuevasSecuencias = relaciones.map(rel => {
+              const existente = (cafInicial.sequence || []).find(
+                s => s.practiceA === rel.practiceA && s.practiceB === rel.practiceB
+              )
+              return {
+                practiceA: rel.practiceA,
+                practiceB: rel.practiceB,
+                documented: existente ? existente.documented : false
+              }
+            })
+            const cafSincronizado = { ...cafInicial, sequence: nuevasSecuencias }
+            setCafDocumentationState(cafSincronizado)
+            saveToStorage(STORAGE_KEYS.cafDocumentation, cafSincronizado)
+            console.log("[CHAPLIN] Arranque: secuencias sincronizadas:", nuevasSecuencias)
+          }
         } else {
           const baseModel = await fetchBaseModel()
-          if (baseModel) setModel(baseModel) // usa el wrapper para guardarlo
+          if (baseModel) {
+            setModelState(baseModel)
+            saveToStorage(STORAGE_KEYS.model, baseModel)
+
+            if (cafInicial) {
+              const relaciones = baseModel.compatibilityRelations || []
+              const nuevasSecuencias = relaciones.map(rel => ({
+                practiceA: rel.practiceA,
+                practiceB: rel.practiceB,
+                documented: false
+              }))
+              const cafSincronizado = { ...cafInicial, sequence: nuevasSecuencias }
+              setCafDocumentationState(cafSincronizado)
+              saveToStorage(STORAGE_KEYS.cafDocumentation, cafSincronizado)
+            }
+          }
         }
 
         const storedPairs = loadFromStorage(STORAGE_KEYS.icfPairs)
@@ -113,14 +186,6 @@ export function ModelProvider({ children }) {
         } else {
           const pairs = await fetchICFPairs()
           if (pairs) setIcfPairs(pairs)
-        }
-
-        const storedCaf = loadFromStorage(STORAGE_KEYS.cafDocumentation)
-        if (storedCaf) {
-          setCafDocumentationState(storedCaf)
-        } else {
-          const caf = await fetchCAFDocumentation()
-          if (caf) setCafDocumentation(caf)
         }
 
         const storedCpt = loadFromStorage(STORAGE_KEYS.cptData)
@@ -149,8 +214,6 @@ export function ModelProvider({ children }) {
     loadInitialData()
   }, [])
 
-  /* ---------------- CONTEXT VALUE ---------------- */
-
   return (
     <ModelContext.Provider value={{
       model,
@@ -164,8 +227,6 @@ export function ModelProvider({ children }) {
       mismatchData,
       setMismatchData,
       loading,
-
-      //   Función para limpiar todo si necesitas un "reset"
       clearStorage: () => {
         Object.values(STORAGE_KEYS).forEach(k => localStorage.removeItem(k))
         setModelState(initialModel)
@@ -179,7 +240,5 @@ export function ModelProvider({ children }) {
     </ModelContext.Provider>
   )
 }
-
-/* ---------------- HOOK ---------------- */
 
 export const useModelContext = () => useContext(ModelContext)

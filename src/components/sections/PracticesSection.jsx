@@ -51,6 +51,12 @@ export default function PracticesSection() {
           { label: "Hybrid", value: "hybrid" },
         ],
       },
+      {
+    name: "mustPrecede",
+    label: "Debe preceder a (IDs separados por coma)",
+    placeholder: "Ej: A_INTEG_CONTINUA, A_SPR_REVIEW",
+    type: "text",
+    },
     ],
     roles: [
       { name: "id", label: "ID", placeholder: "Role ID", type: "text" },

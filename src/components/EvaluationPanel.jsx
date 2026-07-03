@@ -18,6 +18,7 @@ export default function EvaluationPanel() {
   const [igc, setIGC] = useState(null)
   const [igcDescription, setIGCDescription] = useState(null)
   const [error, setError] = useState(null)
+
   const metricsInfo = {
     ICS: {
       title: "Índice de Compatibilidad de Secuencia (ICS)",
@@ -53,10 +54,25 @@ export default function EvaluationPanel() {
     }
   };
 
+  // ─── Función auxiliar: normaliza mustPrecede de string a array ───
+  const normalizarModelo = (model) => ({
+    ...model,
+    practices: model.practices.map(p => ({
+      ...p,
+      activities: p.activities.map(a => ({
+        ...a,
+        mustPrecede: typeof a.mustPrecede === "string"
+          ? a.mustPrecede.split(",").map(s => s.trim()).filter(Boolean)
+          : (a.mustPrecede || [])
+      }))
+    }))
+  })
+
   const runRules = async () => {
     try {
 
-      const result = await evaluateModelRules(model)
+      const modelNormalizado = normalizarModelo(model)
+      const result = await evaluateModelRules(modelNormalizado)
 
       setViolations(result)
       setMetrics(null)
@@ -72,7 +88,8 @@ export default function EvaluationPanel() {
   const runMetrics = async () => {
     try {
 
-      const result = await evaluateMetrics(model)
+      const modelNormalizado = normalizarModelo(model)
+      const result = await evaluateMetrics(modelNormalizado)
 
       setMetrics(result.metrics || {})
       setViolations(null)
@@ -81,16 +98,17 @@ export default function EvaluationPanel() {
 
     } catch (err) {
       console.error(err)
-      setError("Error al ejecutar la evaluación de reglas")
+      setError("Error al ejecutar la evaluación de métricas")
     }
   }
 
   const runFullEvaluation = async () => {
-
     try {
 
+      const modelNormalizado = normalizarModelo(model)
+
       const payload = {
-        model,
+        model: modelNormalizado,
         icf_pairs: icfPairs,
         caf_documentation: cafDocumentation,
         cpt_data: cptData,
@@ -111,10 +129,8 @@ export default function EvaluationPanel() {
       setError(null)
 
     } catch (err) {
-
       console.error(err)
       setError("Error al ejecutar la evaluación completa")
-
     }
   }
 
@@ -132,9 +148,7 @@ export default function EvaluationPanel() {
           Evaluar reglas OCL
         </button>
 
-        <button
-          onClick={runFullEvaluation}
-        >
+        <button onClick={runFullEvaluation}>
           Evaluación completa
         </button>
 
@@ -164,7 +178,7 @@ export default function EvaluationPanel() {
           </p>
 
           <p className="igc-description">
-              {igcDescription}
+            {igcDescription}
           </p>
 
         </div>
@@ -206,12 +220,10 @@ export default function EvaluationPanel() {
                     <td>
                       <div style={{ display: "flex", alignItems: "center" }}>
 
-                        {/* Nombre con ancho fijo */}
                         <span style={{ minWidth: "300px" }}>
                           {name}
                         </span>
 
-                        {/* InfoButton */}
                         {metricsInfo[name] && (
                           <InfoButtonModern
                             title={metricsInfo[name].title}
@@ -223,6 +235,7 @@ export default function EvaluationPanel() {
                     </td>
                     <td>{metricValue}</td>
                     <td>{interpretation}</td>
+
                   </tr>
 
                 )
